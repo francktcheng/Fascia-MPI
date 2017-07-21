@@ -1,0 +1,71 @@
+// Copyright (c) 2013, The Pennsylvania State University.
+// All rights reserved.
+
+To compile
+$ ./mpicxx -fopenmp -O3 -o fascia fascia-mpi.cpp
+
+To run: 
+$ ./fascia [-g graphfile] [-t template || -b batchfile] [options]
+
+graphfile = 
+  n
+  m
+  v0 v1
+  v0 v2
+  ...
+  (zero indexed)
+
+graphfile (if labeled) = 
+  n
+  m
+  label_v0
+  label_v1
+  ...
+  v0 v1
+  v0 v2
+  ...
+  (zero indexed)
+
+template =
+  same format as graphfile
+
+batchfile =
+  templateFile1
+  templateFile2
+  ...
+  (must supply only one of template file or batchfile)
+
+options = 
+  -p  Perform partitioned count, default is distributed
+  -o  Use outerloop parallelization
+  -m  [#], compute counts for motifs of size #
+  -l  Graph and template are labeled
+  -i  [# iterations], default: 1
+  -c  Output per-vertex counts to [template].vert
+  -d  Output graphlet degree distribution to [template].gdd
+  -a  Do not calculate automorphism of template
+      (recommended when template size > 10)
+  -r  Report runtime
+  -v  Verbose output
+  -h  Print this
+
+
+Example runs:
+
+Do distributed counting on 4 tasks of U7 template graph on cs-stanford crawl. Output average count after 100 iterations:
+$ mpirun -n 4 ./fascia -g cs-stanford.graph -t U7.graph -i 100
+
+Do partitioned counting on 8 tasks of U7 template graph on cs-stanford crawl. Output average count after 100 iterations:
+$ mpirun -n 8 ./fascia -g cs-stanford.graph -t U7.graph -i 100 -p
+
+Count all 8 vertex motifs on cs-stanford crawl. Output averages of 50 iterations:
+$ mpirun -n 4 ./fascia -g cs-stanford.graph -m 8 -i 50
+
+Output per-vertex counts of U7 template graph:
+$ mpirun -n 4 ./fascia -g cs-stanford.graph -t U7.graph -i 100
+
+Output per-vertex counts of U7 template graph with partitioned counting:
+$ mpirun -n 4 ./fascia -g cs-stanford.graph -t U7.graph -i 100 -p
+
+Output per-vertex counts of U7 template graph with partitioned counting and verbose output:
+$ mpirun -n 4 ./fascia -g cs-stanford.graph -t U7.graph -i 100 -p -v
