@@ -93,6 +93,91 @@ void print_info(char* name)
 }
 
 
+// void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g)
+// {  
+//   ifstream file_g;
+//   string line;
+//   int* srcs_g;
+//   int* dsts_g;
+//   int n_g;
+//   unsigned m_g;
+//     
+//   if (rank == 0)
+//   {
+//     file_g.open(graph_file);
+//
+//     // Read in labels and vertices for graph
+//     getline(file_g, line);
+//     n_g = atoi(line.c_str());
+//     getline(file_g, line);
+//     m_g = strtoul(line.c_str(), NULL, 10);
+//
+//     if (verbose) 
+//       if (rank == 0) printf("n %d, m %u, p %d\n", n_g, m_g, nprocs);
+//
+//     srcs_g = new int[m_g];
+//     dsts_g = new int[m_g];
+//
+//     if (labeled) {
+//       labels_g = new int[n_g];
+//       for (int i = 0; i < n_g; ++i)
+//       {
+//         getline(file_g, line);  
+//         labels_g[i] = atoi(line.c_str());
+//       }
+//     }
+//
+//     for (unsigned i = 0; i < m_g; ++i)
+//     {
+//       getline(file_g, line, ' ');    
+//       srcs_g[i] = atoi(line.c_str());
+//       getline(file_g, line);  
+//       dsts_g[i] = atoi(line.c_str());
+//     }
+//
+//     file_g.close();
+//
+//     if (nprocs > 1)
+//     {
+//       MPI_Bcast(&n_g, 1, MPI_INT, 0, MPI_COMM_WORLD);
+//       MPI_Bcast(&m_g, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+//       MPI_Bcast_chunk(srcs_g, m_g, 0, rank);
+//       MPI_Bcast_chunk(dsts_g, m_g, 0, rank);
+//
+//       if (labeled)
+//         MPI_Bcast_chunk(labels_g, n_g, 0, rank);
+//     }
+//   }
+//   else
+//   {
+//     MPI_Bcast(&n_g, 1, MPI_INT, 0, MPI_COMM_WORLD);
+//     MPI_Bcast(&m_g, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+//
+//     srcs_g = new int[m_g];
+//     dsts_g = new int[m_g];
+//     MPI_Bcast_chunk(srcs_g, m_g, 0, rank);
+//     MPI_Bcast_chunk(dsts_g, m_g, 0, rank);
+//
+//     if (labeled) {
+//       labels_g = new int[n_g];
+//       MPI_Bcast_chunk(labels_g, n_g, 0, rank);
+//     }
+//   }
+//
+//   g.init(n_g, m_g, srcs_g, dsts_g);
+//   delete [] srcs_g;
+//   delete [] dsts_g;
+// }
+
+/**
+ * @brief Another read in graph function to deal with non-consecutive 
+ * file format 
+ *
+ * @param g
+ * @param graph_file
+ * @param labeled
+ * @param labels_g
+ */
 void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g)
 {  
   ifstream file_g;
@@ -127,15 +212,57 @@ void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g)
       }
     }
 
+    int max_id = 0;
+
     for (unsigned i = 0; i < m_g; ++i)
     {
       getline(file_g, line, ' ');    
       srcs_g[i] = atoi(line.c_str());
+
+      max_id = (srcs_g[i] > max_id ) ? srcs_g[i] : max_id;
+
       getline(file_g, line);  
       dsts_g[i] = atoi(line.c_str());
+
+      max_id = (dsts_g[i] > max_id ) ? dsts_g[i] : max_id;
+
     }
 
     file_g.close();
+
+    if (max_id != n_g - 1)
+    {
+        //remove the "holes" in vertices ids
+        if (verbose) 
+           printf("Start remove holes; max_id: %d, n_g: %d\n", max_id, n_g);
+
+        int* v_id = new int[max_id+1];
+        std::memset(v_id, 0, (max_id+1)*sizeof(int));
+
+        for(int i=0;i<m_g;i++)
+        {
+            v_id[srcs_g[i]] = 1;
+            v_id[dsts_g[i]] = 1;
+        }
+
+        int itr = 0;
+        for(int i=0;i<max_id+1;i++)
+        {
+            if (v_id[i] == 1)
+                v_id[i] = (itr++);
+        }
+
+        for(int i=0;i<m_g;i++)
+        {
+            srcs_g[i] = v_id[srcs_g[i]];
+            dsts_g[i] = v_id[dsts_g[i]];
+        }
+
+        if (verbose) 
+          printf("Finish remove holes\n");
+
+        delete[] v_id;
+    }
 
     if (nprocs > 1)
     {
@@ -169,11 +296,11 @@ void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g)
   delete [] dsts_g;
 }
 
-
 void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g,
   int*& part_offsets)
 {  
-  read_in_graph(g, graph_file, labeled, labels_g);
+
+   read_in_graph(g, graph_file, labeled, labels_g);
 
   if (rank == 0)
   {
@@ -214,13 +341,13 @@ void run_dist(char* graph_file, char* template_file, bool labeled,
     strcat(gdd_file, ".gdd");
   }
 
-  read_in_graph(g, graph_file, labeled, labels_g, part_offsets);
-  read_in_graph(t, template_file, labeled, labels_t);
-
   double elt = 0.0;
   if (timing || verbose) {
     elt = timer();
   }
+
+  read_in_graph(g, graph_file, labeled, labels_g, part_offsets);
+  read_in_graph(t, template_file, labeled, labels_t);
 
   colorcount_part graph_count;
   graph_count.init(g, part_offsets, nprocs, labels_g, labeled,
@@ -294,13 +421,13 @@ void run_single(char* graph_file, char* template_file, bool labeled,
     strcat(gdd_file, ".gdd");
   }
 
-  read_in_graph(g, graph_file, labeled, labels_g);
-  read_in_graph(t, template_file, labeled, labels_t);
-
   double elt = 0.0;
   if (timing || verbose) {
     elt = timer();
   }
+
+  read_in_graph(g, graph_file, labeled, labels_g);
+  read_in_graph(t, template_file, labeled, labels_t);
 
   int task_iterations = int( (double)iterations / (double)nprocs + 0.5);
   if (task_iterations < 1 || iterations == 1) task_iterations = 1;
@@ -375,6 +502,7 @@ void run_single(char* graph_file, char* template_file, bool labeled,
     colorcount graph_count;
     graph_count.init(g, labels_g, labeled, 
                       calc_auto, do_gdd, do_vert);
+
     task_count += graph_count.do_full_count(&t, labels_t, task_iterations);
 
     MPI_Reduce(&task_count, &full_count, 1, 
@@ -453,7 +581,7 @@ void run_batch(char* graph_file, char* batch_file, bool labeled,
 
     int task_iterations = int( (double)iterations / (double)nprocs + 0.5);
     if (task_iterations < 1 || iterations == 1) task_iterations = 1;
-    if (verbose && rank == 1)
+    if (verbose && rank == 0)
       printf("Running %d iteration(s), %d iteration(s) per task\n", iterations, task_iterations);
 
     double task_count = 0.0;
@@ -616,6 +744,12 @@ int main(int argc, char** argv)
   setbuf(stdout, NULL);
 
   MPI_Init(&argc, &argv);
+  // int provided;
+  // MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
+  // if (provided < MPI_THREAD_MULTIPLE) {
+  //     // Error - MPI does not provide needed threading level
+  // }
+
   MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 

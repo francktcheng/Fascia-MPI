@@ -193,7 +193,8 @@ public:
     double final_count = count /= (double)num_iter;
     double prob_colorful = factorial(num_colors) / 
         ( factorial(num_colors - t->num_vertices()) * pow(num_colors, t->num_vertices()) );  
-    int num_auto = t->num_vertices() <= 10 ? count_automorphisms(*t) : 1;
+    // int num_auto = t->num_vertices() <= 10 ? count_automorphisms(*t) : 1;
+    int num_auto = count_automorphisms(*t);
     final_count = floor(final_count / (prob_colorful * (double)num_auto) + 0.5);
 
     if (verbose && rank == 0) {
@@ -235,7 +236,7 @@ private:
 
   double template_count()
   {  
-    double full_count;
+    double full_count = 0.0;
     int num_verts = g->num_vertices();
     colors_g = new int[num_verts];
 
@@ -246,6 +247,7 @@ private:
       xs1024star_t xs;
       xs1024star_seed((unsigned long)rand() + omp_get_thread_num(), &xs);
 
+  
   #pragma omp for
       for (int v = 0; v < num_verts; ++v)
       {
@@ -279,7 +281,7 @@ private:
       }    
 
       double elt = 0.0;
-      float cc = 0.0;
+      double cc = 0.0;
 
       if (num_verts_sub == 1)
       {
@@ -312,7 +314,7 @@ private:
         if (verbose && cc > 0.0)
           printf("Rank %d count: %9.6f\n", rank, cc);  
 
-        MPI_Allreduce(MPI_IN_PLACE, &cc, 1, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, &cc, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   
         if (verbose && cc > 0.0 && rank == 0)
           printf("Total count: %9.6f\n", cc);
@@ -501,9 +503,9 @@ private:
 . ######::. #######::. #######:: ##::. ##:::: ##::::
 :......::::.......::::.......:::..::::..:::::..:::::
 */ 
-  float colorful_count_array_part(int s)
+  double colorful_count_array_part(int s)
   {
-    float cc = 0;
+    double cc = 0;
     int num_verts_sub = subtemplates[s].num_vertices();
 
     int active_index = part.get_active_index(s);
@@ -518,15 +520,16 @@ private:
     unsigned long total_count_loop = 0;
     unsigned long read_count_loop = 0; 
 
-#pragma omp parallel
+#pragma omp parallel 
 {   
     int *valid_nbrs = (int *) malloc(max_degree * sizeof(int));
         assert(valid_nbrs != NULL);
     int valid_nbrs_count = 0;
 
-    float* counts_s = new float[num_colorsets_s];
+    double* counts_s = new double[num_colorsets_s];
     float* counts_v = new float[num_colorsets_a];
     float* counts_u = new float[num_colorsets_p];
+    
     
 #pragma omp for schedule(guided) reduction(+:cc) reduction(+:set_count_loop) \
         reduction(+:total_count_loop) reduction(+:read_count_loop)
@@ -587,7 +590,7 @@ private:
               int p = num_combinations - 1;
               for (int a = 0; a < num_combinations; ++a, --p)
               {
-                counts_s[n] += counts_v[comb_indexes_a[a]] * 
+                counts_s[n] += ((double)counts_v[comb_indexes_a[a]])* 
                       counts_u[comb_indexes_p[p]];
                 ++read_count_loop;
               }
@@ -596,14 +599,14 @@ private:
 
           for (int n = 0; n < num_colorsets_s; ++n)
           {
-            float color_count = counts_s[n];
+            double color_count = counts_s[n];
             if (color_count)
             {
               cc += color_count;
               ++set_count_loop;
               if (s != 0)
               {
-                dt.set(v, comb_num_indexes_set[s][n], color_count);
+                dt.set(v, comb_num_indexes_set[s][n], (float)color_count);
                 ++sizes_verts[offset_vert];  
               }
               else if (do_graphlet_freq || do_vert_output)
@@ -621,6 +624,7 @@ private:
     delete [] counts_u;
     
 }    
+
 #if DEBUG
     printf("%d done count fucks %d\n", rank, s);
 #endif
@@ -631,7 +635,8 @@ private:
     dt.set_total_counts(set_count);
 
     return cc;
-  }
+
+}
   
 
 
