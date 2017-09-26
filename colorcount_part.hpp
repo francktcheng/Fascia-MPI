@@ -171,6 +171,7 @@ public:
     double count = 0.0;
     transfer_time_sum = 0.0;
     transfer_size_sum = 0.0;
+    sync_time_sum = 0.0;
 
     for (int j = 0; j < num_iter; j++)
     {      
@@ -178,16 +179,39 @@ public:
 
       count += template_count();
 
-      if (verbose && rank == 0) {     
-        elt = timer() - elt;
-        if (rank == 0)      
-        {
-          printf("Total time: %9.6lf\n", elt);
-          printf("Computation time: %9.6lf\n", elt - transfer_time_sum);
-          printf("Transfer time: %9.6lf\n", transfer_time_sum);
+      // if (verbose && rank == 0) {     
+      //   elt = timer() - elt;
+      //   if (rank == 0)      
+      //   {
+      //     printf("Total time: %9.6lf\n", elt);
+      //     printf("Computation time: %9.6lf\n", elt - transfer_time_sum);
+      //     printf("Transfer time: %9.6lf\n", transfer_time_sum);
+      //     printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
+      //   }
+      // }
+      elt = timer() - elt;
+      // add codes to calculate total time, sync time, transfer time by average
+      double global_total_time = 0.0;
+      double global_sync_time = 0.0;
+      double global_transfer_time = 0.0;
+
+      MPI_Allreduce(&elt, &global_total_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+      MPI_Allreduce(&sync_time_sum, &global_sync_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+      MPI_Allreduce(&transfer_time_sum, &global_transfer_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+      global_total_time /= nprocs;
+      global_sync_time /= nprocs;
+      global_transfer_time /= nprocs;
+
+      if (verbose && rank == 0)
+      {
+          printf("Total time: %9.6lf\n", global_total_time);
+          printf("Computation time: %9.6lf\n", (global_total_time - global_sync_time));
+          printf("Waiting time: %9.6lf\n", (global_sync_time - global_transfer_time));
+          printf("Comm time: %9.6lf\n", global_transfer_time);
           printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
-        }
       }
+
     }
     
     double final_count = count /= (double)num_iter;
@@ -309,6 +333,11 @@ private:
         }
       }
 
+      // local computation finished
+      // records the sync time, including waiting time for other procs computation
+      double sync_time = 0.0;
+      sync_time = timer();
+
       if (num_verts_sub > 1)
       {
         if (verbose && cc > 0.0)
@@ -333,6 +362,9 @@ private:
         }
         else if (nprocs > 1)
         {
+         
+          // this records the sync time that excludes 
+          // the waiting time
           double trans_time = 0.0;          
           if (rank == 0 && verbose)
             trans_time = timer();
@@ -455,6 +487,11 @@ private:
           delete [] offsets_comp;
         }
       }
+
+      sync_time = timer() - sync_time;
+      printf("Sync time for subtemplate %d for rank %d\n", s, rank);
+      sync_time_sum += sync_time;
+
     } // end for s in subtemplates
 
     return full_count;
@@ -930,6 +967,8 @@ private:
 
   double transfer_time_sum;
   double transfer_size_sum;
+
+  double sync_time_sum;
 
   int begin_vert;
   int end_vert;
