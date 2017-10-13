@@ -2,6 +2,10 @@
 // All rights reserved.
 // 
 // See COPYING for license.
+#include <iostream>
+#include <fstream>
+
+
 
 using namespace std;
 
@@ -13,7 +17,7 @@ public:
   {  }
     
   void init(Graph& full_graph, int* labels, bool label, 
-            bool calc_auto, bool do_gdd, bool do_vert)
+            bool calc_auto, bool do_gdd, bool do_vert, int omp_thds)
   {
     g = &full_graph;
     num_verts_graph = g->num_vertices();
@@ -22,6 +26,7 @@ public:
     do_graphlet_freq = do_gdd;
     do_vert_output = do_vert;
     calculate_automorphisms = calc_auto;
+    omp_nums = omp_thds;
 
     if (do_graphlet_freq || do_vert_output)
     {
@@ -33,7 +38,7 @@ public:
   
   void init(Graph& full_graph, int* labels, bool label, 
             bool calc_auto, bool do_gdd, bool do_vert,
-            int thread_id)
+            int thread_id, int omp_thds)
   {
     g = &full_graph;
     num_verts_graph = g->num_vertices();
@@ -57,6 +62,13 @@ public:
     t = sub_graph;
     labels_t = labels;          
     
+    //create vtune flag if neccessary
+    ofstream vtune_trigger;
+    //use abs path
+    vtune_trigger.open("/N/u/lc37/WorkSpace/Hsw_Test/Graph-Counting/test_scripts/vtune-flag.txt");
+    vtune_trigger << "Start training process and trigger vtune profiling.\n";
+    vtune_trigger.close(); 
+
     // create subtemplates and sort them in increasing order 
 if (verbose && rank == 0) {
     printf("Beginning partitioning ... \n");
@@ -268,7 +280,7 @@ if (verbose && rank == 0) {
 
     if (!labeled)
     {
-#pragma omp parallel for reduction(+:set_count_loop)
+#pragma omp parallel for reduction(+:set_count_loop) num_threads(omp_nums)
       for (int v = 0; v < num_verts_graph; ++v)
       {  
         int n = colors_g[v]; 
@@ -282,7 +294,7 @@ if (verbose && rank == 0) {
     {
       int* labels_sub = part.get_labels(s);  
       int label_s = labels_sub[0];
-#pragma omp parallel for reduction(+:set_count_loop)
+#pragma omp parallel for reduction(+:set_count_loop) num_threads(omp_nums)
       for (int v = 0; v < num_verts_graph; ++v)
       {  
         int n = colors_g[v];
@@ -313,7 +325,7 @@ if (verbose && rank == 0) {
     int total_count_loop = 0;
     int read_count_loop = 0;    
 
-#pragma omp parallel
+#pragma omp parallel num_threads(omp_nums)
 {    
 #if TIME_INNERLOOP 
         double elt = timer();
@@ -675,6 +687,7 @@ if (verbose && rank == 0) {
   dynamic_table_array dt;
   partitioner part;
   
+  int omp_nums;
   int** choose_table;
   int**** index_sets;
   int***** color_sets;

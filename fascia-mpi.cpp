@@ -322,7 +322,7 @@ void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g,
 }
 
 void run_dist(char* graph_file, char* template_file, bool labeled,
-  bool do_vert, bool do_gdd, int iterations, bool calc_auto)
+  bool do_vert, bool do_gdd, int iterations, bool calc_auto, int omp_thds)
 {
   Graph g;
   Graph t;
@@ -351,7 +351,7 @@ void run_dist(char* graph_file, char* template_file, bool labeled,
 
   colorcount_part graph_count;
   graph_count.init(g, part_offsets, nprocs, labels_g, labeled,
-                    calc_auto, do_gdd, do_vert);
+                    calc_auto, do_gdd, do_vert, omp_thds);
   double full_count = graph_count.do_full_count(&t, labels_t, iterations);
 
   if (do_gdd || do_vert)
@@ -403,7 +403,7 @@ if (timing || verbose) {
 void run_single(char* graph_file, char* template_file, bool labeled,
                 bool do_vert, bool do_gdd,
                 int iterations, 
-                bool do_outerloop, bool calc_auto)
+                bool do_outerloop, bool calc_auto, int omp_thds)
 {
   Graph g;
   Graph t;
@@ -439,7 +439,8 @@ void run_single(char* graph_file, char* template_file, bool labeled,
 
   if (do_outerloop)
   {
-    int num_threads = omp_get_max_threads();
+    // int num_threads = omp_get_max_threads();
+    int num_threads = omp_thds;
     int iter = int( (double)task_iterations / (double)num_threads + 0.5);
     if (iter < 1)
       iter = 1;
@@ -447,7 +448,7 @@ void run_single(char* graph_file, char* template_file, bool labeled,
     colorcount* graph_count = new colorcount[num_threads];
     for (int tid = 0; tid < num_threads; ++tid) {
       graph_count[tid].init(g, labels_g, labeled, 
-                            calc_auto, do_gdd, do_vert);
+                            calc_auto, do_gdd, do_vert, num_threads);
     }
 
     double** vert_counts;
@@ -501,7 +502,7 @@ void run_single(char* graph_file, char* template_file, bool labeled,
   {
     colorcount graph_count;
     graph_count.init(g, labels_g, labeled, 
-                      calc_auto, do_gdd, do_vert);
+                      calc_auto, do_gdd, do_vert, omp_thds);
 
     task_count += graph_count.do_full_count(&t, labels_t, task_iterations);
 
@@ -555,7 +556,7 @@ if (timing || verbose) {
 void run_batch(char* graph_file, char* batch_file, bool labeled,
                     bool do_vert, bool do_gdd,
                     int iterations, 
-                    bool do_outerloop, bool calc_auto)
+                    bool do_outerloop, bool calc_auto, int omp_thds)
 {
   Graph g;
   Graph t;
@@ -596,7 +597,7 @@ void run_batch(char* graph_file, char* batch_file, bool labeled,
       colorcount* graph_count = new colorcount[num_threads];
       for (int tid = 0; tid < num_threads; ++tid) {
         graph_count[tid].init(g, labels_g, labeled, 
-                              calc_auto, do_gdd, do_vert);
+                              calc_auto, do_gdd, do_vert, num_threads);
       }
 
       double** vert_counts;
@@ -654,7 +655,7 @@ void run_batch(char* graph_file, char* batch_file, bool labeled,
     {
       colorcount graph_count;
       graph_count.init(g, labels_g, labeled, 
-                        calc_auto, do_gdd, do_vert);
+                        calc_auto, do_gdd, do_vert, omp_thds);
       task_count += graph_count.do_full_count(&t, labels_t, task_iterations);
 
       MPI_Reduce(&task_count, &full_count, 1, 
@@ -714,7 +715,7 @@ if (timing || verbose) {
 void run_motif(char* graph_file, int motif, 
                 bool do_vert, bool do_gdd, 
                 int iterations, 
-                bool do_outerloop, bool calc_auto)
+                bool do_outerloop, bool calc_auto, int omp_thds)
 {
   char* motif_batchfile = NULL;
 
@@ -734,7 +735,7 @@ void run_motif(char* graph_file, int motif,
   run_batch(graph_file, motif_batchfile, false,
             do_vert, do_gdd,
             iterations, 
-            do_outerloop, calc_auto);
+            do_outerloop, calc_auto, omp_thds);
 }
 
 
@@ -765,10 +766,11 @@ int main(int argc, char** argv)
   verbose = false;
   bool distributed_count = true;
   bool partitioned_count = false;
+  int omp_thds = omp_get_max_threads();
   int motif = 0;
 
   char c;
-  while ((c = getopt (argc, argv, "g:t:b:i:m:acdvrohlp")) != -1)
+  while ((c = getopt (argc, argv, "g:t:b:i:s:m:acdvrohlp")) != -1)
   {
     switch (c)
     {
@@ -779,6 +781,7 @@ int main(int argc, char** argv)
       case 'b': batch_file = strdup(optarg); break;
       case 'i': iterations = atoi(optarg); break;
       case 'm': motif = atoi(optarg); break;
+      case 's': omp_thds = atoi(optarg); break;
       case 'a': calculate_automorphism = false; break;
       case 'c': do_vert = true; break;
       case 'd': do_gdd = true; break;
@@ -865,23 +868,23 @@ int main(int argc, char** argv)
   if (partitioned_count) {
     run_dist(graph_file, template_file, labeled, 
       do_vert, do_gdd, 
-      iterations, calculate_automorphism);
+      iterations, calculate_automorphism, omp_thds);
   }
   else {
     if (motif) {
       run_motif(graph_file, motif, 
                 do_vert, do_gdd, 
-                iterations, do_outerloop, calculate_automorphism);
+                iterations, do_outerloop, calculate_automorphism, omp_thds);
     }
     else if (template_file != NULL) {
       run_single(graph_file, template_file, labeled,                
                   do_vert, do_gdd,
-                  iterations, do_outerloop, calculate_automorphism);
+                  iterations, do_outerloop, calculate_automorphism, omp_thds);
     }
     else if (batch_file != NULL) {
       run_batch(graph_file, batch_file, labeled,
                   do_vert, do_gdd,
-                  iterations, do_outerloop, calculate_automorphism);
+                  iterations, do_outerloop, calculate_automorphism, omp_thds);
     }
   }
 

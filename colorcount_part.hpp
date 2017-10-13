@@ -20,7 +20,7 @@ public:
 */
   void init(Graph& full_graph, int* Part_offsets, int num_parts,
     int* labels, bool label,
-    bool calc_auto, bool do_gdd, bool do_vert)
+    bool calc_auto, bool do_gdd, bool do_vert, int omp_thds)
   {
     g = &full_graph;
     labels_g = labels;
@@ -28,6 +28,7 @@ public:
     labeled = label;    
     do_graphlet_freq = do_gdd;
     do_vert_output = do_vert;
+	omp_nums = omp_thds;
 
     begin_vert = part_offsets[rank];
     end_vert = part_offsets[rank+1];
@@ -169,56 +170,73 @@ public:
       printf("%d n %d, max degree %d\n", rank, num_verts_graph, max_degree); 
  
     double count = 0.0;
-    transfer_time_sum = 0.0;
-    transfer_size_sum = 0.0;
-    sync_time_sum = 0.0;
+
+    double global_total_time_itr = 0.0;
+    double global_sync_time_itr = 0.0;
+    double global_comp_time_itr = 0.0;
+    double global_comm_time_itr = 0.0;
+    double global_transfer_time_itr = 0.0;
+
+    double global_total_time_all = 0.0;
+    double global_sync_time_all = 0.0;
+    double global_comp_time_all = 0.0;
+    double global_comm_time_all = 0.0;
+    double global_transfer_time_all = 0.0;
 
     for (int j = 0; j < num_iter; j++)
     {      
-      double elt = timer();
+        //record time for each iteration
+        transfer_time_sum = 0.0;
+        transfer_size_sum = 0.0;
+        sync_time_sum = 0.0;
+		compute_time = 0.0;
+		comm_time = 0.0;
 
-      count += template_count();
+        double elt = timer();
+        count += template_count();
 
-      // if (verbose && rank == 0) {     
-      //   elt = timer() - elt;
-      //   if (rank == 0)      
-      //   {
-      //     printf("Total time: %9.6lf\n", elt);
-      //     printf("Computation time: %9.6lf\n", elt - transfer_time_sum);
-      //     printf("Transfer time: %9.6lf\n", transfer_time_sum);
-      //     printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
-      //   }
-      // }
-      elt = timer() - elt;
-      // add codes to calculate total time, sync time, transfer time by average
-      double global_total_time = 0.0;
-      double global_sync_time = 0.0;
-      double global_transfer_time = 0.0;
+        elt = timer() - elt;
+        global_total_time_itr = 0.0;
+        global_sync_time_itr = 0.0;
+        global_comp_time_itr = 0.0;
+        global_comm_time_itr = 0.0;
+        global_transfer_time_itr = 0.0;
 
-      MPI_Allreduce(&elt, &global_total_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-      MPI_Allreduce(&sync_time_sum, &global_sync_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-      MPI_Allreduce(&transfer_time_sum, &global_transfer_time, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&elt, &global_total_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&sync_time_sum, &global_sync_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&compute_time, &global_comp_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&comm_time, &global_comm_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&transfer_time_sum, &global_transfer_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
-      global_total_time /= nprocs;
-      global_sync_time /= nprocs;
-      global_transfer_time /= nprocs;
+        global_total_time_itr /= nprocs;
+        global_sync_time_itr /= nprocs;
+        global_comp_time_itr /= nprocs;
+        global_comm_time_itr /= nprocs;
+        global_transfer_time_itr /= nprocs;
 
-      if (verbose && rank == 0)
-      {
-          printf("Total time: %9.6lf\n", global_total_time);
-          printf("Computation time: %9.6lf\n", (global_total_time - global_sync_time));
-          printf("Waiting time: %9.6lf\n", (global_sync_time - global_transfer_time));
-          printf("Comm time: %9.6lf\n", global_transfer_time);
-          printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
-      }
+        global_total_time_all += global_total_time_itr;
+        global_sync_time_all += global_sync_time_itr;
+        global_comp_time_all += global_comp_time_itr;
+        global_comm_time_all += global_comm_time_itr;
+        global_transfer_time_all += global_transfer_time_itr;
 
     }
     
+    if (verbose && rank == 0)
+    {
+        printf("Total time: %9.6lf\n", global_total_time_all/num_iter);
+        printf("Computation time: %9.6lf\n", global_comp_time_all/num_iter);
+        printf("Comm time: %9.6lf\n", global_comm_time_all/num_iter);
+        printf("Waiting time: %9.6lf\n", (global_total_time_all - global_comp_time_all - global_comm_time_all)/num_iter);
+        // printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
+    }
+
     double final_count = count /= (double)num_iter;
     double prob_colorful = factorial(num_colors) / 
         ( factorial(num_colors - t->num_vertices()) * pow(num_colors, t->num_vertices()) );  
-    // int num_auto = t->num_vertices() <= 10 ? count_automorphisms(*t) : 1;
-    int num_auto = count_automorphisms(*t);
+    // int num_auto = t->num_vertices() <= 12 ? count_automorphisms(*t) : 1;
+    int num_auto = 1;
+    // int num_auto = count_automorphisms(*t);
     final_count = floor(final_count / (prob_colorful * (double)num_auto) + 0.5);
 
     if (verbose && rank == 0) {
@@ -264,7 +282,13 @@ private:
     int num_verts = g->num_vertices();
     colors_g = new int[num_verts];
 
+	double compute_start = 0.0;
+
+	compute_start = timer();
+
     if (rank == 0) {
+	
+	
 #pragma omp parallel 
 {
       /* thread-local RNG initialization */    
@@ -279,9 +303,12 @@ private:
         colors_g[v] = color;
       }
 }
+
     }
 
     MPI_Bcast(colors_g, num_verts, MPI_INT, 0, MPI_COMM_WORLD);
+
+	compute_time += (timer() - compute_start);
 
     if (verbose && rank == 0) printf("Initing table node\n");
 
@@ -306,6 +333,8 @@ private:
 
       double elt = 0.0;
       double cc = 0.0;
+
+	  compute_start = timer();
 
       if (num_verts_sub == 1)
       {
@@ -333,10 +362,11 @@ private:
         }
       }
 
+	  compute_time += (timer() - compute_start);
       // local computation finished
       // records the sync time, including waiting time for other procs computation
-      double sync_time = 0.0;
-      sync_time = timer();
+      // double sync_time = 0.0;
+      // sync_time = timer();
 
       if (num_verts_sub > 1)
       {
@@ -366,8 +396,8 @@ private:
           // this records the sync time that excludes 
           // the waiting time
           double trans_time = 0.0;          
-          if (rank == 0 && verbose)
-            trans_time = timer();
+          // if (rank == 0 && verbose)
+          trans_time = timer();
     
           for (int i = 0; i < nprocs; ++i) {     
             comm_sizes_send[i] = 0;
@@ -458,15 +488,26 @@ private:
             }
           }
 
+          trans_time = timer() - trans_time;
+
           MPI_Barrier(MPI_COMM_WORLD);
           dt.finalize();
 
+          // allreduce to get the minimal transfer time
+		  // no need to find the minimal in p2p mode
+		  // no collective operations
+          double trans_time_effective = 0.0;
+          MPI_Reduce(&trans_time, &trans_time_effective, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD); 
+          
           if (verbose && rank == 0)
           {
-            trans_time = timer() - trans_time;
-            printf("Transfer time: %9.6lf\n", trans_time);
-            transfer_time_sum += trans_time;
+            printf("Transfer time: %9.6lf\n", trans_time_effective);
           }
+
+          transfer_time_sum += trans_time_effective;
+          sync_time_sum += trans_time;
+		  comm_time += trans_time;
+
         }
         else
         {  
@@ -488,9 +529,9 @@ private:
         }
       }
 
-      sync_time = timer() - sync_time;
-      printf("Sync time for subtemplate %d for rank %d\n", s, rank);
-      sync_time_sum += sync_time;
+      // sync_time = timer() - sync_time;
+      // printf("Sync time for subtemplate %d for rank %d\n", s, rank);
+      // sync_time_sum += sync_time;
 
     } // end for s in subtemplates
 
@@ -510,7 +551,7 @@ private:
   void init_table_node(int s)
   {
     if (!labeled) {
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(static) num_threads(omp_nums)
       for (int v = 0; v < num_verts_graph; ++v)
         dt.set_node(v, colors_g[v], 1.0);
     }
@@ -518,7 +559,7 @@ private:
     {
       int* labels_sub = part.get_labels(s);  
       int label_s = labels_sub[0];
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(static) num_threads(omp_nums)
       for (int v = 0; v < num_verts_graph; ++v)
       {  
         int n = colors_g[v];
@@ -557,7 +598,7 @@ private:
     unsigned long total_count_loop = 0;
     unsigned long read_count_loop = 0; 
 
-#pragma omp parallel 
+#pragma omp parallel num_threads(omp_nums)
 {   
     int *valid_nbrs = (int *) malloc(max_degree * sizeof(int));
         assert(valid_nbrs != NULL);
@@ -567,93 +608,94 @@ private:
     float* counts_v = new float[num_colorsets_a];
     float* counts_u = new float[num_colorsets_p];
     
-    
+
 #pragma omp for schedule(guided) reduction(+:cc) reduction(+:set_count_loop) \
-        reduction(+:total_count_loop) reduction(+:read_count_loop)
+    reduction(+:total_count_loop) reduction(+:read_count_loop)
     for (int v = begin_vert; v < end_vert; ++v)
     {
-      int offset_vert = v-begin_vert;
-      sizes_verts[offset_vert] = 0;
-      valid_nbrs_count = 0;   
-      int table_size_v = dt.table_size_a(v);
-      if (table_size_v)
-      {
-        float* table_counts_v = dt.table_counts_a(v);
-        short* table_colors_v = dt.colorsets_a(v);
-        for (int i = 0; i < num_colorsets_a; ++i) counts_v[i] = 0.0;
-        for (int i = 0; i < num_colorsets_s; ++i) counts_s[i] = 0.0;
-        for (int i = 0; i < table_size_v; ++i)
-        {     
-          float count = table_counts_v[i];
-          short color = table_colors_v[i];
-          counts_v[color] = count;
-        }        
+        int offset_vert = v-begin_vert;
+        sizes_verts[offset_vert] = 0;
+        valid_nbrs_count = 0;   
+        int table_size_v = dt.table_size_a(v);
+        if (table_size_v)
+        {
+            float* table_counts_v = dt.table_counts_a(v);
+            short* table_colors_v = dt.colorsets_a(v);
+            for (int i = 0; i < num_colorsets_a; ++i) counts_v[i] = 0.0;
+            for (int i = 0; i < num_colorsets_s; ++i) counts_s[i] = 0.0;
+            for (int i = 0; i < table_size_v; ++i)
+            {     
+                float count = table_counts_v[i];
+                short color = table_colors_v[i];
+                counts_v[color] = count;
+            }        
 
-        int* adjs = g->adjacent_vertices(v);
-        int end = g->out_degree(v);
-        ++read_count_loop;
-       
-        for (int i = 0; i < end; ++i) {
-          int adj_i = adjs[i];
-          if (dt.table_size_p(adj_i)) {
-            valid_nbrs[valid_nbrs_count++] = adj_i;
-          }
-        }
+            int* adjs = g->adjacent_vertices(v);
+            int end = g->out_degree(v);
+            ++read_count_loop;
 
-        assert(valid_nbrs_count <= max_degree);        
-        if (valid_nbrs_count)
-        { 
-          for (int vn = 0; vn < valid_nbrs_count; ++vn)
-          {
-            int u = valid_nbrs[vn];
-            int table_size_u = dt.table_size_p(u);
-            float* table_counts_u = dt.table_counts_p(u);
-            short* table_colors_u = dt.colorsets_p(u);
-
-            for (int i = 0; i < num_colorsets_p; ++i) counts_u[i] = 0.0;
-            for (int i = 0; i < table_size_u; ++i)
-            {
-              float count = table_counts_u[i];
-              short color = table_colors_u[i];
-              counts_u[color] = count;
-            }  
-
-            for (int n = 0; n < num_colorsets_s; ++n)
-            {
-              float color_count = 0.0;                
-              int* comb_indexes_a = comb_num_indexes[0][s][n];
-              int* comb_indexes_p = comb_num_indexes[1][s][n];
-              
-              int p = num_combinations - 1;
-              for (int a = 0; a < num_combinations; ++a, --p)
-              {
-                counts_s[n] += ((double)counts_v[comb_indexes_a[a]])* 
-                      counts_u[comb_indexes_p[p]];
-                ++read_count_loop;
-              }
+            for (int i = 0; i < end; ++i) {
+                int adj_i = adjs[i];
+                if (dt.table_size_p(adj_i)) {
+                    valid_nbrs[valid_nbrs_count++] = adj_i;
+                }
             }
-          }
 
-          for (int n = 0; n < num_colorsets_s; ++n)
-          {
-            double color_count = counts_s[n];
-            if (color_count)
-            {
-              cc += color_count;
-              ++set_count_loop;
-              if (s != 0)
-              {
-                dt.set(v, comb_num_indexes_set[s][n], (float)color_count);
-                ++sizes_verts[offset_vert];  
-              }
-              else if (do_graphlet_freq || do_vert_output)
-                final_vert_counts[offset_vert] += (double)color_count;
+            assert(valid_nbrs_count <= max_degree);        
+            if (valid_nbrs_count)
+            { 
+                for (int vn = 0; vn < valid_nbrs_count; ++vn)
+                {
+                    int u = valid_nbrs[vn];
+                    int table_size_u = dt.table_size_p(u);
+                    float* table_counts_u = dt.table_counts_p(u);
+                    short* table_colors_u = dt.colorsets_p(u);
+
+                    for (int i = 0; i < num_colorsets_p; ++i) counts_u[i] = 0.0;
+                    for (int i = 0; i < table_size_u; ++i)
+                    {
+                        float count = table_counts_u[i];
+                        short color = table_colors_u[i];
+                        counts_u[color] = count;
+                    }  
+
+                    for (int n = 0; n < num_colorsets_s; ++n)
+                    {
+                        float color_count = 0.0;                
+                        int* comb_indexes_a = comb_num_indexes[0][s][n];
+                        int* comb_indexes_p = comb_num_indexes[1][s][n];
+
+                        int p = num_combinations - 1;
+                        for (int a = 0; a < num_combinations; ++a, --p)
+                        {
+                            counts_s[n] += ((double)counts_v[comb_indexes_a[a]])* 
+                                counts_u[comb_indexes_p[p]];
+                            ++read_count_loop;
+                        }
+                    }
+                }
+
+                for (int n = 0; n < num_colorsets_s; ++n)
+                {
+                    double color_count = counts_s[n];
+                    if (color_count)
+                    {
+                        cc += color_count;
+                        ++set_count_loop;
+                        if (s != 0)
+                        {
+                            dt.set(v, comb_num_indexes_set[s][n], (float)color_count);
+                            ++sizes_verts[offset_vert];  
+                        }
+                        else if (do_graphlet_freq || do_vert_output)
+                            final_vert_counts[offset_vert] += (double)color_count;
+                    }
+                    ++total_count_loop;  
+                }
             }
-            ++total_count_loop;  
-          }
         }
-      }
     }
+
 
     free(valid_nbrs);
     delete [] counts_s;
@@ -955,6 +997,8 @@ private:
   int* num_verts_table;  
   int num_verts_graph;
   int max_degree;
+
+  int omp_nums;
   
   unsigned long set_count;
   unsigned long total_count;
@@ -969,6 +1013,9 @@ private:
   double transfer_size_sum;
 
   double sync_time_sum;
+
+  double compute_time;
+  double comm_time;
 
   int begin_vert;
   int end_vert;
