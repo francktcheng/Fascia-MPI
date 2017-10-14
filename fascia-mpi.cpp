@@ -322,7 +322,7 @@ void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g,
 }
 
 void run_dist(char* graph_file, char* template_file, bool labeled,
-  bool do_vert, bool do_gdd, int iterations, bool calc_auto, int omp_thds)
+  bool do_vert, bool do_gdd, int iterations, bool calc_auto, int omp_thds, int alltoall)
 {
   Graph g;
   Graph t;
@@ -351,7 +351,7 @@ void run_dist(char* graph_file, char* template_file, bool labeled,
 
   colorcount_part graph_count;
   graph_count.init(g, part_offsets, nprocs, labels_g, labeled,
-                    calc_auto, do_gdd, do_vert, omp_thds);
+                    calc_auto, do_gdd, do_vert, omp_thds, alltoall);
   double full_count = graph_count.do_full_count(&t, labels_t, iterations);
 
   if (do_gdd || do_vert)
@@ -766,11 +766,12 @@ int main(int argc, char** argv)
   verbose = false;
   bool distributed_count = true;
   bool partitioned_count = false;
+  int alltoall = 0;
   int omp_thds = omp_get_max_threads();
   int motif = 0;
 
   char c;
-  while ((c = getopt (argc, argv, "g:t:b:i:s:m:acdvrohlp")) != -1)
+  while ((c = getopt (argc, argv, "g:t:b:i:s:m:x:acdvrohlp")) != -1)
   {
     switch (c)
     {
@@ -782,6 +783,7 @@ int main(int argc, char** argv)
       case 'i': iterations = atoi(optarg); break;
       case 'm': motif = atoi(optarg); break;
       case 's': omp_thds = atoi(optarg); break;
+      case 'x': alltoall = atoi(optarg); break;
       case 'a': calculate_automorphism = false; break;
       case 'c': do_vert = true; break;
       case 'd': do_gdd = true; break;
@@ -868,7 +870,7 @@ int main(int argc, char** argv)
   if (partitioned_count) {
     run_dist(graph_file, template_file, labeled, 
       do_vert, do_gdd, 
-      iterations, calculate_automorphism, omp_thds);
+      iterations, calculate_automorphism, omp_thds, alltoall);
   }
   else {
     if (motif) {

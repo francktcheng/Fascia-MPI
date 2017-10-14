@@ -1,5 +1,35 @@
+//mem info extraction
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
+
+//memsure the RSS mem used by this process
+void process_mem_usage(double& resident_set)
+{
+	resident_set = 0.0;
+
+	FILE *fp;
+	long vmrss;
+	int BUFFERSIZE=80;
+	char *buf= new char[85];
+	if((fp = fopen("/proc/self/status","r")))
+	{
+		while(fgets(buf, BUFFERSIZE, fp) != NULL)
+		{
+			if(strstr(buf, "VmRSS") != NULL)
+			{
+				if (sscanf(buf, "%*s %ld", &vmrss) == 1){
+					// printf("VmSize is %dKB\n", vmrss);
+					resident_set = (double)vmrss;
+				}
+			}
+		}
+	}
+
+	fclose(fp);
+	delete[] buf;
+}
 
 class colorcount_part{
 public:
@@ -20,7 +50,7 @@ public:
 */
   void init(Graph& full_graph, int* Part_offsets, int num_parts,
     int* labels, bool label,
-    bool calc_auto, bool do_gdd, bool do_vert, int omp_thds)
+    bool calc_auto, bool do_gdd, bool do_vert, int omp_thds, int alltoall)
   {
     g = &full_graph;
     labels_g = labels;
@@ -29,6 +59,7 @@ public:
     do_graphlet_freq = do_gdd;
     do_vert_output = do_vert;
 	omp_nums = omp_thds;
+	useAlltoAll = alltoall;
 
     begin_vert = part_offsets[rank];
     end_vert = part_offsets[rank+1];
@@ -172,23 +203,29 @@ public:
     double count = 0.0;
 
     double global_total_time_itr = 0.0;
-    double global_sync_time_itr = 0.0;
     double global_comp_time_itr = 0.0;
     double global_comm_time_itr = 0.0;
-    double global_transfer_time_itr = 0.0;
+	double global_comm_data_itr = 0.0;
+	double global_comm_tht_itr = 0.0;
+	double global_peak_mem_itr = 0.0;
+	double global_peak_comm_mem_itr = 0.0;
 
     double global_total_time_all = 0.0;
-    double global_sync_time_all = 0.0;
     double global_comp_time_all = 0.0;
     double global_comm_time_all = 0.0;
-    double global_transfer_time_all = 0.0;
+	double global_comm_data_all = 0.0;
+	double global_comm_tht_all = 0.0;
+	double global_peak_mem_all = 0.0;
+	double global_peak_comm_mem_all = 0.0;
 
     for (int j = 0; j < num_iter; j++)
     {      
         //record time for each iteration
-        transfer_time_sum = 0.0;
         transfer_size_sum = 0.0;
-        sync_time_sum = 0.0;
+		// transfer_tht = 0.0;
+		mem_rss = 0.0;
+		peak_mem = 0.0;
+		peak_comm_mem = 0.0;
 		compute_time = 0.0;
 		comm_time = 0.0;
 
@@ -196,46 +233,74 @@ public:
         count += template_count();
 
         elt = timer() - elt;
+		transfer_size_sum = transfer_size_sum/(1024*1024*1024);
+
+		printf("Local Total time Rank %d: %9.6lf\n", rank, elt);
+		std::fflush;
+        printf("Local Computation time Rank %d: %9.6lf\n", rank, compute_time);
+		std::fflush;
+        printf("Local Comm time Rank %d: %9.6lf\n", rank, comm_time);
+		std::fflush;
+		printf("Local Peak Mem Rank %d: %9.6lf GB\n", rank, peak_mem);
+		std::fflush;
+		printf("Local Peak Comm Mem Rank %d: %9.6lf GB\n", rank, peak_comm_mem);
+		std::fflush;
+        printf("Local Waiting time Rank %d: %9.6lf\n", rank,  (elt - compute_time - comm_time));
+		std::fflush;
+		printf("Local Comm Data Bytes Rank %d: %9.6lf GB\n", rank, transfer_size_sum);
+		std::fflush;
+
         global_total_time_itr = 0.0;
-        global_sync_time_itr = 0.0;
         global_comp_time_itr = 0.0;
         global_comm_time_itr = 0.0;
-        global_transfer_time_itr = 0.0;
+		global_comm_data_itr = 0.0;
+		global_comm_tht_itr = 0.0;
+		global_peak_mem_itr = 0.0;
+		global_peak_comm_mem_itr = 0.0;
+		
 
         MPI_Allreduce(&elt, &global_total_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        MPI_Allreduce(&sync_time_sum, &global_sync_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         MPI_Allreduce(&compute_time, &global_comp_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         MPI_Allreduce(&comm_time, &global_comm_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        MPI_Allreduce(&transfer_time_sum, &global_transfer_time_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&transfer_size_sum, &global_comm_data_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&peak_mem, &global_peak_mem_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&peak_comm_mem, &global_peak_comm_mem_itr, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
         global_total_time_itr /= nprocs;
-        global_sync_time_itr /= nprocs;
         global_comp_time_itr /= nprocs;
         global_comm_time_itr /= nprocs;
-        global_transfer_time_itr /= nprocs;
+		global_peak_mem_itr /= nprocs;
+		global_peak_comm_mem_itr /= nprocs;
+
+		global_comm_tht_itr = global_comm_data_itr/global_comm_time_itr;
 
         global_total_time_all += global_total_time_itr;
-        global_sync_time_all += global_sync_time_itr;
         global_comp_time_all += global_comp_time_itr;
         global_comm_time_all += global_comm_time_itr;
-        global_transfer_time_all += global_transfer_time_itr;
-
+		global_comm_data_all += global_comm_data_itr;
+		global_peak_mem_all += global_peak_mem_itr;
+		global_peak_comm_mem_all += global_peak_comm_mem_itr;
+		global_comm_tht_all += global_comm_tht_itr;
     }
     
+    MPI_Barrier(MPI_COMM_WORLD);
     if (verbose && rank == 0)
     {
         printf("Total time: %9.6lf\n", global_total_time_all/num_iter);
         printf("Computation time: %9.6lf\n", global_comp_time_all/num_iter);
         printf("Comm time: %9.6lf\n", global_comm_time_all/num_iter);
         printf("Waiting time: %9.6lf\n", (global_total_time_all - global_comp_time_all - global_comm_time_all)/num_iter);
-        // printf("Transfer data: %9.6lf\n", transfer_size_sum/CHUNK_SIZE);
+        printf("Transfer data: %9.6lf\n", (global_comm_data_all)/num_iter);
+        printf("Transfer Throughput: %9.6lf GB/s\n", (global_comm_tht_all)/num_iter);
+        printf("Peak mem: %9.6lf GB\n", (global_peak_mem_all)/num_iter);
+        printf("Peak Comm mem: %9.6lf GB\n", (global_peak_comm_mem_all)/num_iter);
     }
 
     double final_count = count /= (double)num_iter;
     double prob_colorful = factorial(num_colors) / 
         ( factorial(num_colors - t->num_vertices()) * pow(num_colors, t->num_vertices()) );  
-    // int num_auto = t->num_vertices() <= 12 ? count_automorphisms(*t) : 1;
-    int num_auto = 1;
+    int num_auto = t->num_vertices() <= 12 ? count_automorphisms(*t) : 1;
+    // int num_auto = 1;
     // int num_auto = count_automorphisms(*t);
     final_count = floor(final_count / (prob_colorful * (double)num_auto) + 0.5);
 
@@ -363,6 +428,12 @@ private:
       }
 
 	  compute_time += (timer() - compute_start);
+	  //record the peak mem usage of this subtemplate 
+	  process_mem_usage(mem_rss);
+	  mem_rss = mem_rss /(1024*1024);
+	  printf("Mem utilization compute step rank %d sub %d: %9.6lf GB\n", rank, s, mem_rss);
+	  peak_mem = (mem_rss > peak_mem) ? mem_rss : peak_mem;
+	  
       // local computation finished
       // records the sync time, including waiting time for other procs computation
       // double sync_time = 0.0;
@@ -416,77 +487,227 @@ private:
           // Communicate counts tables among adjacent parts
           // TODO: replace this with alltoallv
           // --or option to use it over send/recv
-          for (int i = 0; i < nprocs; ++i) 
-          {
-            for (int j = 0; j < nprocs; ++j) 
-            {
-              if (rank == i && rank == j) // compress own table
-              {
-                unsigned long count = comm_sizes_send[j];
-                int num_vert_send = comm_num_send[j];
-                int num_vert_rec = comm_num_rec[i];
+		  // bool usep2p = true;
+		  // bool usep2p = false;
+		  if (useAlltoAll == 0)
+		  {
+			  for (int i = 0; i < nprocs; ++i) 
+			  {
+				  for (int j = 0; j < nprocs; ++j) 
+				  {
+					  if (rank == i && rank == j) // compress own table
+					  {
+						  unsigned long count = comm_sizes_send[j];
+						  int num_vert_send = comm_num_send[j];
+						  int num_vert_rec = comm_num_rec[i];
 
-                float* counts_comp = new float[count];
-                short* colorsets_comp = new short[count];
-                unsigned long* offsets_comp = new unsigned long[num_vert_send+1];
-                dt.compress_for_send(count, 
-                  num_vert_send, comm_verts_send[j], j,
-                  counts_comp, colorsets_comp, offsets_comp);                 
-                dt.append_to_table(count, num_vert_rec, 
-                  part_offsets, i, comm_verts_rec[i],
-                  counts_comp, colorsets_comp, offsets_comp);
+						  float* counts_comp = new float[count];
+						  short* colorsets_comp = new short[count];
+						  unsigned long* offsets_comp = new unsigned long[num_vert_send+1];
+						  dt.compress_for_send(count, 
+								  num_vert_send, comm_verts_send[j], j,
+								  counts_comp, colorsets_comp, offsets_comp);                 
+						  dt.append_to_table(count, num_vert_rec, 
+								  part_offsets, i, comm_verts_rec[i],
+								  counts_comp, colorsets_comp, offsets_comp);
 
-                delete [] counts_comp;
-                delete [] colorsets_comp;
-                delete [] offsets_comp;
-              }
-              else if (rank == i)  //sending
-              {
-                unsigned long count = comm_sizes_send[j];
-                if (count)
-                {
-                  unsigned long num_vert_send = (unsigned long)comm_num_send[j];
-                  float* counts_comp = new float[count];
-                  short* colorsets_comp = new short[count];
-                  unsigned long* offsets_comp = new unsigned long[num_vert_send+1];
-                  dt.compress_for_send(count, 
-                    num_vert_send, comm_verts_send[j], j,
-                    counts_comp, colorsets_comp, offsets_comp);
+						  delete [] counts_comp;
+						  delete [] colorsets_comp;
+						  delete [] offsets_comp;
+					  }
+					  else if (rank == i)  //sending
+					  {
+						  unsigned long count = comm_sizes_send[j];
+						  if (count)
+						  {
+							  unsigned long num_vert_send = (unsigned long)comm_num_send[j];
+							  float* counts_comp = new float[count];
+							  short* colorsets_comp = new short[count];
+							  unsigned long* offsets_comp = new unsigned long[num_vert_send+1];
+							  dt.compress_for_send(count, 
+									  num_vert_send, comm_verts_send[j], j,
+									  counts_comp, colorsets_comp, offsets_comp);
 
-                  MPI_Send_chunk(counts_comp, count, j, rank);
-                  MPI_Send_chunk(colorsets_comp, count, j, rank);
-                  MPI_Send_chunk(offsets_comp, num_vert_send+1, j, rank);
+							  MPI_Send_chunk(counts_comp, count, j, rank);
+							  MPI_Send_chunk(colorsets_comp, count, j, rank);
+							  MPI_Send_chunk(offsets_comp, num_vert_send+1, j, rank);
 
-                  delete [] counts_comp;
-                  delete [] colorsets_comp;
-                  delete [] offsets_comp;
-                  transfer_size_sum += count*(4+2) + num_vert_send*8;
-                }
-              }
-              else if (rank == j) // receiving
-              { 
-                unsigned long count = comm_sizes_rec[i];
-                if (count)
-                {
-                  unsigned long num_vert_rec = (unsigned long)comm_num_rec[i];
-                  float* counts_comp = new float[count];
-                  short* colorsets_comp = new short[count];
-                  unsigned long* offsets_comp = new unsigned long[num_vert_rec+1];
+							  //record mem usage
+							  double p2p_mem = 0.0;
+							  process_mem_usage(p2p_mem);
+							  p2p_mem = p2p_mem /(1024*1024);
+							  peak_mem = (p2p_mem > peak_mem) ? p2p_mem : peak_mem;
+							  //calculate mem usage in comm
+							  peak_comm_mem = ((p2p_mem - mem_rss) > peak_comm_mem) ? (p2p_mem - mem_rss) : peak_comm_mem;
 
-                  MPI_Recv_chunk(counts_comp, count, i, rank);
-                  MPI_Recv_chunk(colorsets_comp, count, i, rank);
-                  MPI_Recv_chunk(offsets_comp, num_vert_rec+1, i, rank);
+							  delete [] counts_comp;
+							  delete [] colorsets_comp;
+							  delete [] offsets_comp;
+							  transfer_size_sum += count*(4+2) + num_vert_send*8;
+						  }
+					  }
+					  else if (rank == j) // receiving
+					  { 
+						  unsigned long count = comm_sizes_rec[i];
+						  if (count)
+						  {
+							  unsigned long num_vert_rec = (unsigned long)comm_num_rec[i];
+							  float* counts_comp = new float[count];
+							  short* colorsets_comp = new short[count];
+							  unsigned long* offsets_comp = new unsigned long[num_vert_rec+1];
 
-                  dt.append_to_table(count, num_vert_rec, 
-                    part_offsets, i, comm_verts_rec[i],
-                    counts_comp, colorsets_comp, offsets_comp);
-                  delete [] counts_comp;
-                  delete [] colorsets_comp;
-                  delete [] offsets_comp;
-                }
-              }
-            }
-          }
+							  MPI_Recv_chunk(counts_comp, count, i, rank);
+							  MPI_Recv_chunk(colorsets_comp, count, i, rank);
+							  MPI_Recv_chunk(offsets_comp, num_vert_rec+1, i, rank);
+
+							  dt.append_to_table(count, num_vert_rec, 
+									  part_offsets, i, comm_verts_rec[i],
+									  counts_comp, colorsets_comp, offsets_comp);
+							  delete [] counts_comp;
+							  delete [] colorsets_comp;
+							  delete [] offsets_comp;
+						  }
+					  }
+				  }
+			  }
+
+		  }
+		  else
+		  {
+
+			  // start alltoallv, preparing sendbuf, recvbuf, 
+			  // unsigned long* sendcounts = new unsigned long[nprocs];
+			  // unsigned long* recvcounts = new unsigned long[nprocs];
+			  // unsigned long* sdisp = new unsigned long[nprocs];
+			  // unsigned long* rdisp = new unsigned long[nprocs];
+              //
+			  // unsigned long* sendoffset = new unsigned long[nprocs];
+			  // unsigned long* recvoffset = new unsigned long[nprocs];
+			  // unsigned long* sdispoffset = new unsigned long[nprocs];
+			  // unsigned long* rdispoffset = new unsigned long[nprocs];
+
+			  int* sendcounts = new int[nprocs];
+			  int* recvcounts = new int[nprocs];
+			  int* sdisp = new int[nprocs];
+			  int* rdisp = new int[nprocs];
+
+			  int* sendoffset = new int[nprocs];
+			  int* recvoffset = new int[nprocs];
+			  int* sdispoffset = new int[nprocs];
+			  int* rdispoffset = new int[nprocs];
+
+			  sdisp[0] = 0;
+			  rdisp[0] = 0;
+			  unsigned long sendsize = 0;
+			  unsigned long recvsize = 0;
+
+			  sdispoffset[0] = 0;
+			  rdispoffset[0] = 0;
+			  unsigned long sendsizeoffset = 0;
+			  unsigned long recvsizeoffset = 0;
+
+			  // prepare send information
+			  for (int i=0; i<nprocs; i++)
+			  {
+				 sendcounts[i] = comm_sizes_send[i];
+				 sendsize += sendcounts[i];
+
+				 sendoffset[i] = comm_num_send[i] + 1;
+				 sendsizeoffset += sendoffset[i];
+
+			  }
+
+			  for (int i=1; i<nprocs; i++)
+			  {
+				  sdisp[i] = sdisp[i-1] + sendcounts[i-1];
+				  sdispoffset[i] = sdispoffset[i-1] + sendoffset[i-1];
+			  }
+
+			  for (int i=0;i<nprocs; i++)
+			  {
+				 recvcounts[i] = comm_sizes_rec[i];
+				 recvsize += recvcounts[i];
+
+				 recvoffset[i] = comm_num_rec[i] + 1;
+				 recvsizeoffset += recvoffset[i];
+
+			  }
+
+			  for(int i=1; i<nprocs; i++)
+			  {
+				  rdisp[i] = rdisp[i-1] + recvcounts[i-1];
+				  rdispoffset[i] = rdispoffset[i-1] + recvoffset[i-1];
+			  }
+
+			  float* sendbuf = new float[sendsize];
+			  float* recvbuf = new float[recvsize];
+			  short* sendbufcolorsets = new short[sendsize];
+			  short* recvbufcolorsets = new short[recvsize];
+			  unsigned long* sendbufoffsets = new unsigned long[sendsizeoffset];
+			  unsigned long* recvbufoffsets = new unsigned long[recvsizeoffset];
+
+			  //compress and copy data
+			  unsigned long count_comp = 0;
+			  unsigned long offset_comp = 0;
+
+			  for(int i=0; i<nprocs; i++)
+			  {
+				  count_comp = sendcounts[i]; 
+				  if (count_comp > 0)
+				  {
+					  offset_comp = sendoffset[i] - 1;
+					  dt.compress_for_send(count_comp, offset_comp, comm_verts_send[i], i, sendbuf + (int)sdisp[i], sendbufcolorsets + (int)sdisp[i], 
+							  sendbufoffsets + (int)sdispoffset[i]);
+				  }
+			  }
+			  
+			  transfer_size_sum += (sendsize*(4+2) + sendsizeoffset*8);
+
+			  //record mem usage
+			  double p2p_mem = 0.0;
+			  process_mem_usage(p2p_mem);
+			  p2p_mem = p2p_mem /(1024*1024);
+			  peak_mem = (p2p_mem > peak_mem) ? p2p_mem : peak_mem;
+			  //calculate mem usage in comm
+			  peak_comm_mem = ((p2p_mem - mem_rss) > peak_comm_mem) ? (p2p_mem - mem_rss) : peak_comm_mem;
+
+			  //mpialltoallv
+			  MPI_Alltoallv(sendbuf, sendcounts, sdisp, MPI_FLOAT, recvbuf, recvcounts, rdisp, MPI_FLOAT, MPI_COMM_WORLD);
+			  MPI_Alltoallv(sendbufcolorsets, sendcounts, sdisp, MPI_SHORT, recvbufcolorsets, recvcounts, rdisp, MPI_SHORT, MPI_COMM_WORLD);
+			  MPI_Alltoallv(sendbufoffsets, sendoffset, sdispoffset, MPI_UNSIGNED_LONG, recvbufoffsets, recvoffset, rdispoffset, MPI_UNSIGNED_LONG, MPI_COMM_WORLD);
+
+			  //append data after mpialltoallv
+			  for(int i=0; i<nprocs; i++)
+			  {
+				  count_comp = recvcounts[i]; 
+				  if (count_comp > 0)
+				  {
+					  offset_comp = recvoffset[i] - 1;
+					  dt.append_to_table(count_comp, offset_comp, 
+									  part_offsets, i, comm_verts_rec[i],
+									  recvbuf + (int)rdisp[i], recvbufcolorsets + (int)rdisp[i], recvbufoffsets + (int)rdispoffset[i]);
+				  }
+			  }
+
+			  //release send and recv buf
+			  delete[] sendbuf;
+			  delete[] recvbuf;
+			  delete[] sendbufcolorsets;
+			  delete[] recvbufcolorsets;
+			  delete[] sendbufoffsets;
+			  delete[] recvbufoffsets;
+			  
+			  delete[] sendcounts;
+			  delete[] recvcounts;
+			  delete[] sdisp;
+			  delete[] rdisp;
+
+			  delete[] sendoffset;
+			  delete[] recvoffset;
+			  delete[] sdispoffset;
+			  delete[] rdispoffset;
+
+		  }
 
           trans_time = timer() - trans_time;
 
@@ -504,8 +725,8 @@ private:
             printf("Transfer time: %9.6lf\n", trans_time_effective);
           }
 
-          transfer_time_sum += trans_time_effective;
-          sync_time_sum += trans_time;
+          // transfer_time_sum += trans_time_effective;
+          // sync_time_sum += trans_time;
 		  comm_time += trans_time;
 
         }
@@ -999,6 +1220,7 @@ private:
   int max_degree;
 
   int omp_nums;
+  int useAlltoAll;
   
   unsigned long set_count;
   unsigned long total_count;
@@ -1009,10 +1231,14 @@ private:
   bool do_vert_output;
   bool calculate_automorphisms;
 
-  double transfer_time_sum;
+  // double transfer_time_sum;
   double transfer_size_sum;
+  double transfer_tht;
+  double mem_rss;
+  double peak_mem;
+  double peak_comm_mem;
 
-  double sync_time_sum;
+  // double sync_time_sum;
 
   double compute_time;
   double comm_time;
