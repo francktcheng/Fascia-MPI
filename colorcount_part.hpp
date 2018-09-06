@@ -221,33 +221,36 @@ public:
     for (int j = 0; j < num_iter; j++)
     {      
         //record time for each iteration
+		compute_time = 0.0;
+		compute_time_prev = 0.0;
+		comm_time = 0.0;
+		comm_time_prev = 0.0;
         transfer_size_sum = 0.0;
-		// transfer_tht = 0.0;
+        transfer_size_sum_prev = 0.0;
 		mem_rss = 0.0;
+		comm_mem_rss = 0.0;
 		peak_mem = 0.0;
 		peak_comm_mem = 0.0;
-		compute_time = 0.0;
-		comm_time = 0.0;
 
         double elt = timer();
         count += template_count();
 
         elt = timer() - elt;
-		transfer_size_sum = transfer_size_sum/(1024*1024*1024);
+		// transfer_size_sum = transfer_size_sum/(1024*1024*1024);
 
-		printf("Local Total time Rank %d: %9.6lf\n", rank, elt);
+		printf("Local Processes: %d Total time: %9.6lf\n", rank, elt);
 		std::fflush;
-        printf("Local Computation time Rank %d: %9.6lf\n", rank, compute_time);
+        printf("Local Processes: %d Computation time: %9.6lf\n", rank, compute_time);
 		std::fflush;
-        printf("Local Comm time Rank %d: %9.6lf\n", rank, comm_time);
+        printf("Local Processes: %d Comm time: %9.6lf\n", rank, comm_time);
 		std::fflush;
-		printf("Local Peak Mem Rank %d: %9.6lf GB\n", rank, peak_mem);
+		printf("Local Processes: %d Peak Mem: %9.6lf GB\n", rank, peak_mem);
 		std::fflush;
-		printf("Local Peak Comm Mem Rank %d: %9.6lf GB\n", rank, peak_comm_mem);
+		printf("Local Processes: %d Peak Comm Mem: %9.6lf GB\n", rank, peak_comm_mem);
 		std::fflush;
-        printf("Local Waiting time Rank %d: %9.6lf\n", rank,  (elt - compute_time - comm_time));
+        printf("Local Processes: %d Waiting time: %9.6lf\n", rank,  (elt - compute_time - comm_time));
 		std::fflush;
-		printf("Local Comm Data Bytes Rank %d: %9.6lf GB\n", rank, transfer_size_sum);
+		printf("Local Processes: %d Comm Data Bytes: %9.6lf GB\n", rank, transfer_size_sum/(1024*1024*1024));
 		std::fflush;
 
         global_total_time_itr = 0.0;
@@ -290,8 +293,8 @@ public:
         printf("Computation time: %9.6lf\n", global_comp_time_all/num_iter);
         printf("Comm time: %9.6lf\n", global_comm_time_all/num_iter);
         printf("Waiting time: %9.6lf\n", (global_total_time_all - global_comp_time_all - global_comm_time_all)/num_iter);
-        printf("Transfer data: %9.6lf\n", (global_comm_data_all)/num_iter);
-        printf("Transfer Throughput: %9.6lf GB/s\n", (global_comm_tht_all)/num_iter);
+        printf("Transfer data: %9.6lf GB\n", (global_comm_data_all)/num_iter);
+        printf("Transfer Throughput: %9.6lf GB/s\n", (global_comm_tht_all)/(1024*1024*1024)/num_iter);
         printf("Peak mem: %9.6lf GB\n", (global_peak_mem_all)/num_iter);
         printf("Peak Comm mem: %9.6lf GB\n", (global_peak_comm_mem_all)/num_iter);
     }
@@ -373,15 +376,18 @@ private:
 
     MPI_Bcast(colors_g, num_verts, MPI_INT, 0, MPI_COMM_WORLD);
 
+	//record the computation time for coloring stage
 	compute_time += (timer() - compute_start);
+	compute_time_prev = compute_time;
 
     if (verbose && rank == 0) printf("Initing table node\n");
 
-    int table_node = subtemplate_count - 1;
-    dt.set_table_node(table_node);
-    init_table_node(table_node);
+    // int table_node = subtemplate_count - 1;
+    // dt.set_table_node(table_node);
+    // init_table_node(table_node);
 
-    for (int s = subtemplate_count - 2; s >= 0 ; --s)
+	// start to process each sub-templats in a reverse order
+    for (int s = subtemplate_count - 1; s >= 0 ; --s)
     {
       set_count = 0;
       total_count = 0;
@@ -391,28 +397,39 @@ private:
       int a = part.get_active_index(s);
       int p = part.get_passive_index(s);
 
-      if (verbose && rank == 0) {
-        printf("\nIniting with sub %d, verts: %d\n", s, num_verts_sub);
-        printf("Active %d, Passive: %d\n", a, p);
-      }    
+      // if (verbose && rank == 0) {
+      //   printf("\nIniting with sub %d, verts: %d\n", s, num_verts_sub);
+      //   printf("Active %d, Passive: %d\n", a, p);
+      // }    
 
       double elt = 0.0;
       double cc = 0.0;
 
+	  // record start compute time
 	  compute_start = timer();
 
       if (num_verts_sub == 1)
-      {
-        if (verbose && rank == 0) elt = timer();
-      
-        dt.set_sub_to_table_node(s);
+	  {
+		  if (s == subtemplate_count - 1)
+		  {
+			dt.set_table_node(s);
+			init_table_node(s);
+		  }
+		  else
+		  {
 
-        if (verbose && rank == 0) { 
-          elt = timer() - elt;
-          if (rank == 0)
-            printf("%d s %d, it node %9.6lf s.\n", rank, s, elt);
-        }
-      }
+			  if (verbose && rank == 0) elt = timer();
+
+			  dt.set_sub_to_table_node(s);
+
+			  if (verbose && rank == 0) { 
+				  elt = timer() - elt;
+				  if (rank == 0)
+					  printf("%d s %d, it node %9.6lf s.\n", rank, s, elt);
+			  }
+
+		  }
+	  }
       else
       {  
         if (verbose && rank == 0) elt = timer();
@@ -427,18 +444,22 @@ private:
         }
       }
 
+	  // record the computation time for a sub-template 
 	  compute_time += (timer() - compute_start);
+	  printf("Process: %d trace sub id: %d Comp Time: %9.6lf s\n", rank, s, (compute_time - compute_time_prev) );
+	  compute_time_prev = compute_time;
+
 	  //record the peak mem usage of this subtemplate 
 	  process_mem_usage(mem_rss);
 	  mem_rss = mem_rss /(1024*1024);
-	  printf("Mem utilization compute step rank %d sub %d: %9.6lf GB\n", rank, s, mem_rss);
 	  peak_mem = (mem_rss > peak_mem) ? mem_rss : peak_mem;
-	  
+
+	  //reset at each sub-template
+	  comm_mem_rss = 0.0;
+      comm_start = timer();
+
       // local computation finished
       // records the sync time, including waiting time for other procs computation
-      // double sync_time = 0.0;
-      // sync_time = timer();
-
       if (num_verts_sub > 1)
       {
         if (verbose && cc > 0.0)
@@ -466,9 +487,9 @@ private:
          
           // this records the sync time that excludes 
           // the waiting time
-          double trans_time = 0.0;          
+          // double comm_start = 0.0;          
           // if (rank == 0 && verbose)
-          trans_time = timer();
+          comm_start = timer();
     
           for (int i = 0; i < nprocs; ++i) {     
             comm_sizes_send[i] = 0;
@@ -485,12 +506,9 @@ private:
           dt.init_comp_table(comm_sizes_rec);
 
           // Communicate counts tables among adjacent parts
-          // TODO: replace this with alltoallv
-          // --or option to use it over send/recv
-		  // bool usep2p = true;
-		  // bool usep2p = false;
 		  if (useAlltoAll == 0)
 		  {
+			  // use p2p communication
 			  for (int i = 0; i < nprocs; ++i) 
 			  {
 				  for (int j = 0; j < nprocs; ++j) 
@@ -536,9 +554,10 @@ private:
 							  double p2p_mem = 0.0;
 							  process_mem_usage(p2p_mem);
 							  p2p_mem = p2p_mem /(1024*1024);
-							  peak_mem = (p2p_mem > peak_mem) ? p2p_mem : peak_mem;
-							  //calculate mem usage in comm
-							  peak_comm_mem = ((p2p_mem - mem_rss) > peak_comm_mem) ? (p2p_mem - mem_rss) : peak_comm_mem;
+							  comm_mem_rss = ((p2p_mem - mem_rss) > comm_mem_rss) ? (p2p_mem - mem_rss) : comm_mem_rss;
+							  peak_comm_mem = (comm_mem_rss > peak_comm_mem) ? comm_mem_rss : peak_comm_mem;
+							  mem_rss = (p2p_mem > mem_rss) ? p2p_mem : mem_rss;
+							  peak_mem = (mem_rss > peak_mem) ? mem_rss : peak_mem;
 
 							  delete [] counts_comp;
 							  delete [] colorsets_comp;
@@ -572,20 +591,9 @@ private:
 			  }
 
 		  }
-		  else
+		  else 
 		  {
-
-			  // start alltoallv, preparing sendbuf, recvbuf, 
-			  // unsigned long* sendcounts = new unsigned long[nprocs];
-			  // unsigned long* recvcounts = new unsigned long[nprocs];
-			  // unsigned long* sdisp = new unsigned long[nprocs];
-			  // unsigned long* rdisp = new unsigned long[nprocs];
-              //
-			  // unsigned long* sendoffset = new unsigned long[nprocs];
-			  // unsigned long* recvoffset = new unsigned long[nprocs];
-			  // unsigned long* sdispoffset = new unsigned long[nprocs];
-			  // unsigned long* rdispoffset = new unsigned long[nprocs];
-
+			  // use alltoallv implementation
 			  int* sendcounts = new int[nprocs];
 			  int* recvcounts = new int[nprocs];
 			  int* sdisp = new int[nprocs];
@@ -667,9 +675,10 @@ private:
 			  double p2p_mem = 0.0;
 			  process_mem_usage(p2p_mem);
 			  p2p_mem = p2p_mem /(1024*1024);
-			  peak_mem = (p2p_mem > peak_mem) ? p2p_mem : peak_mem;
-			  //calculate mem usage in comm
-			  peak_comm_mem = ((p2p_mem - mem_rss) > peak_comm_mem) ? (p2p_mem - mem_rss) : peak_comm_mem;
+			  comm_mem_rss = ((p2p_mem - mem_rss) > comm_mem_rss) ? (p2p_mem - mem_rss) : comm_mem_rss;
+			  peak_comm_mem = (comm_mem_rss > peak_comm_mem) ? comm_mem_rss : peak_comm_mem;
+			  mem_rss = (p2p_mem > mem_rss) ? p2p_mem : mem_rss;
+			  peak_mem = (mem_rss > peak_mem) ? mem_rss : peak_mem;
 
 			  //mpialltoallv
 			  MPI_Alltoallv(sendbuf, sendcounts, sdisp, MPI_FLOAT, recvbuf, recvcounts, rdisp, MPI_FLOAT, MPI_COMM_WORLD);
@@ -709,29 +718,28 @@ private:
 
 		  }
 
-          trans_time = timer() - trans_time;
+		  // // print the comm time for a sub-template 
+		  // comm_time += (timer() - comm_start);
+		  // printf("Process: %d trace sub id: %d Comm Time: %9.6lf s\n", rank, s, (comm_time - comm_time_prev) );
+		  // comm_time_prev = comm_time;
+          //
+		  // // print the comm transfer data for a sub-template 
+		  // printf("Process: %d trace sub id: %d Comm Data: %9.6lf s\n", rank, s, (transfer_size_sum - transfer_size_sum_prev)/(1024*1024*1024) );
+		  // transfer_size_sum_prev = transfer_size_sum;
+          //
+		  // // print the peak mem for a sub-template 
+		  // printf("Process: %d trace sub id: %d Peak Mem: %9.6lf GB\n", rank, s, mem_rss);
+          //
+		  // // print the peak comm mem for a sub-template 
+		  // printf("Process: %d trace sub id: %d Peak Mem Comm: %9.6lf GB\n", rank, s, comm_mem_rss);
 
           MPI_Barrier(MPI_COMM_WORLD);
           dt.finalize();
 
-          // allreduce to get the minimal transfer time
-		  // no need to find the minimal in p2p mode
-		  // no collective operations
-          double trans_time_effective = 0.0;
-          MPI_Reduce(&trans_time, &trans_time_effective, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD); 
-          
-          if (verbose && rank == 0)
-          {
-            printf("Transfer time: %9.6lf\n", trans_time_effective);
-          }
-
-          // transfer_time_sum += trans_time_effective;
-          // sync_time_sum += trans_time;
-		  comm_time += trans_time;
-
         }
         else
         {  
+		  // only one procs, no communication
           unsigned long count = comm_sizes_send[0];
           int num_vert_send = comm_num_send[0];
           int num_vert_rec = comm_num_rec[0];
@@ -748,11 +756,23 @@ private:
           delete [] colorsets_comp;
           delete [] offsets_comp;
         }
+
       }
 
-      // sync_time = timer() - sync_time;
-      // printf("Sync time for subtemplate %d for rank %d\n", s, rank);
-      // sync_time_sum += sync_time;
+	  // print the comm time for a sub-template 
+	  comm_time += (timer() - comm_start);
+	  printf("Process: %d trace sub id: %d Comm Time: %9.6lf s\n", rank, s, (comm_time - comm_time_prev) );
+	  comm_time_prev = comm_time;
+
+	  // print the comm transfer data for a sub-template 
+	  printf("Process: %d trace sub id: %d Comm Data: %9.6lf s\n", rank, s, (transfer_size_sum - transfer_size_sum_prev)/(1024*1024*1024) );
+	  transfer_size_sum_prev = transfer_size_sum;
+
+	  // print the peak mem for a sub-template 
+	  printf("Process: %d trace sub id: %d Peak Mem: %9.6lf GB\n", rank, s, mem_rss);
+
+	  // print the peak comm mem for a sub-template 
+	  printf("Process: %d trace sub id: %d Peak Mem Comm: %9.6lf GB\n", rank, s, comm_mem_rss);
 
     } // end for s in subtemplates
 
@@ -1231,17 +1251,17 @@ private:
   bool do_vert_output;
   bool calculate_automorphisms;
 
-  // double transfer_time_sum;
+  double compute_time;
+  double compute_time_prev;
+  double comm_time;
+  double comm_start;          
+  double comm_time_prev;
   double transfer_size_sum;
-  double transfer_tht;
+  double transfer_size_sum_prev;
   double mem_rss;
+  double comm_mem_rss;
   double peak_mem;
   double peak_comm_mem;
-
-  // double sync_time_sum;
-
-  double compute_time;
-  double comm_time;
 
   int begin_vert;
   int end_vert;
