@@ -217,7 +217,8 @@ class colorcount{
 
                     }
 
-                    colorful_count(s);
+                    // colorful_count(s);
+                    colorful_count_innerU(s);
                     if (verbose && rank == 0) {  
                         elt = timer() - elt;
                         fprintf(stderr, "s %d, array time %9.6lf s.\n", s, elt);
@@ -260,7 +261,8 @@ class colorcount{
             if (verbose) {  
                 elt = timer();
             }
-            full_count = colorful_count(0);
+            // full_count = colorful_count(0);
+            full_count = colorful_count_innerU(0);
             if (verbose && rank == 0) {  
                 elt = timer() - elt;
                 fprintf(stderr, "s %d, array time %9.6lf s.\n", 0, elt);
@@ -326,7 +328,7 @@ class colorcount{
         }
 
         double colorful_count(int s)
-        {
+        {/*{{{*/
             double cc = 0.0;
             int num_verts_sub = subtemplates[s].num_vertices();
 
@@ -432,7 +434,120 @@ class colorcount{
             read_count = read_count_loop;
 
             return cc;
-        }
+        }/*}}}*/
+
+        double colorful_count_innerU(int s)
+        {/*{{{*/
+
+            double cc = 0.0;
+            int num_verts_sub = subtemplates[s].num_vertices();
+
+            int active_index = part.get_active_index(s);
+            // int passive_index = part.get_passive_index(s);
+            int num_verts_a = num_verts_table[active_index];  
+            int num_combinations = choose_table[num_verts_sub][num_verts_a];;  
+            int set_count_loop = 0;
+            int total_count_loop = 0;
+            int read_count_loop = 0;    
+
+#pragma omp parallel num_threads(omp_nums)
+            {    
+#if TIME_INNERLOOP 
+                double elt = timer();
+#endif
+
+                int *valid_nbrs = (int *) malloc(max_degree * sizeof(int));
+                assert(valid_nbrs != NULL);
+                int valid_nbrs_count = 0;
+
+#pragma omp for schedule(static) reduction(+:cc) reduction(+:set_count_loop) \
+                reduction(+:total_count_loop) reduction(+:read_count_loop)
+                for (int v = 0; v < num_verts_graph; ++v)
+                {
+                    valid_nbrs_count = 0;
+
+                    if (dt.is_vertex_init_active(v))
+                    {
+                        int* adjs = g->adjacent_vertices(v);
+                        int end = g->out_degree(v);
+                        float* counts_a = dt.get_active(v);  
+#if COLLECT_DATA
+                        ++read_count_loop;
+#endif      
+                        for (int i = 0; i < end; ++i) {
+                            int adj_i = adjs[i];
+                            if (dt.is_vertex_init_passive(adj_i)) {
+                                valid_nbrs[valid_nbrs_count++] = adj_i;
+                            }
+                        }
+
+                        if (valid_nbrs_count)
+                        {
+                            int num_combinations_verts_sub = 
+                                choose_table[num_colors][num_verts_sub];
+                            for (int n = 0; n < num_combinations_verts_sub; ++n)
+                            {
+                                double color_count = 0.0;                
+                                int* comb_indexes_a = comb_num_indexes[0][s][n];
+                                int* comb_indexes_p = comb_num_indexes[1][s][n];
+
+                                for (int i = 0; i < valid_nbrs_count; ++i) 
+                                {
+
+                                    int valid_nbrs_id = valid_nbrs[i];
+                                    int p = num_combinations - 1;
+                                    for (int a = 0; a < num_combinations; ++a, --p) 
+                                    {
+                                        float count_a = counts_a[comb_indexes_a[a]];
+                                        if (count_a) 
+                                        {
+                                            color_count += ((double)count_a) * 
+                                                dt.get_passive(valid_nbrs_id, comb_indexes_p[p]);
+#if COLLECT_DATA                  
+                                            ++read_count_loop;
+#endif                  
+                                        }
+                                    }
+
+                                }
+
+                                if (color_count > 0.0)
+                                {
+                                    cc += color_count;
+#if COLLECT_DATA
+                                    ++set_count_loop;
+#endif              
+                                    if (s != 0)
+                                        dt.set(v, comb_num_indexes_set[s][n], (float)color_count);
+                                    else if (do_graphlet_freq || do_vert_output)
+                                        final_vert_counts[v] += (double)color_count;
+                                }
+#if COLLECT_DATA            
+                                ++total_count_loop;
+#endif
+                            }
+                        }
+                    }
+                }
+#if TIME_INNERLOOP
+#ifdef _OPENMP
+                int tid = omp_get_thread_num();
+#else
+                int tid = 0;
+#endif
+                elt = timer() - elt;
+                fprintf(stderr, "tid %d, time %9.6lf s.\n", tid, elt);
+#endif
+
+                free(valid_nbrs);    
+            } // end parallel
+
+            set_count = set_count_loop;
+            total_count = total_count_loop;
+            read_count = read_count_loop;
+
+            return cc;
+        }/*}}}*/
 
         // Creates all of the tables used, the important one is the combinatorial 
         //  number system indexes, as that is used for the gets and sets with the
