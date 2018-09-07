@@ -1,0 +1,646 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CHUNK_SIZE	mpi_wrappers.hpp	2;"	d
+COLLECT_DATA	fascia.h	13;"	d
+CREATE_SIZE	fascia.h	10;"	d
+CXXFLAGS	Makefile	/^CXXFLAGS=-Wall -fopenmp -O3$/;"	m
+DEBUG	fascia.h	12;"	d
+FASCIA_H	fascia.h	7;"	d
+Graph	graph.hpp	/^  Graph() {};$/;"	f	class:Graph	access:public	signature:()
+Graph	graph.hpp	/^class Graph{$/;"	c
+Graph::Graph	graph.hpp	/^  Graph() {};$/;"	f	class:Graph	access:public	signature:()
+Graph::adjacencies	graph.hpp	/^  int* adjacencies() const$/;"	f	class:Graph	access:public	signature:() const
+Graph::adjacency_array	graph.hpp	/^  int* adjacency_array;$/;"	m	class:Graph	access:private
+Graph::adjacent_vertices	graph.hpp	/^  int* adjacent_vertices(int v)$/;"	f	class:Graph	access:public	signature:(int v)
+Graph::clear	graph.hpp	/^  void clear()$/;"	f	class:Graph	access:public	signature:()
+Graph::degree_list	graph.hpp	/^  unsigned* degree_list;$/;"	m	class:Graph	access:private
+Graph::degrees	graph.hpp	/^  unsigned* degrees() const$/;"	f	class:Graph	access:public	signature:() const
+Graph::init	graph.hpp	/^  void init(int n, unsigned m, int* srcs, int* dsts)$/;"	f	class:Graph	access:public	signature:(int n, unsigned m, int* srcs, int* dsts)
+Graph::max_deg	graph.hpp	/^  int max_deg;$/;"	m	class:Graph	access:private
+Graph::max_degree	graph.hpp	/^  unsigned max_degree() const$/;"	f	class:Graph	access:public	signature:() const
+Graph::num_edges	graph.hpp	/^  unsigned num_edges() const$/;"	f	class:Graph	access:public	signature:() const
+Graph::num_edgs	graph.hpp	/^  unsigned num_edgs;$/;"	m	class:Graph	access:private
+Graph::num_vertices	graph.hpp	/^  int num_vertices() const$/;"	f	class:Graph	access:public	signature:() const
+Graph::num_verts	graph.hpp	/^  int num_verts;$/;"	m	class:Graph	access:private
+Graph::operator =	graph.hpp	/^  Graph& operator= (const Graph& param)$/;"	f	class:Graph	access:public	signature:(const Graph& param)
+Graph::out_degree	graph.hpp	/^  unsigned out_degree(int v)$/;"	f	class:Graph	access:public	signature:(int v)
+Graph::~Graph	graph.hpp	/^  ~Graph() {};$/;"	f	class:Graph	access:public	signature:()
+MPI_Bcast_chunk	mpi_wrappers.hpp	/^void MPI_Bcast_chunk(int* arr, unsigned long length, int root, int rank)$/;"	f	signature:(int* arr, unsigned long length, int root, int rank)
+MPI_Recv_chunk	mpi_wrappers.hpp	/^void MPI_Recv_chunk(float* arr, unsigned long length, int from, int rank)$/;"	f	signature:(float* arr, unsigned long length, int from, int rank)
+MPI_Recv_chunk	mpi_wrappers.hpp	/^void MPI_Recv_chunk(int* arr, unsigned long length, int from, int rank)$/;"	f	signature:(int* arr, unsigned long length, int from, int rank)
+MPI_Recv_chunk	mpi_wrappers.hpp	/^void MPI_Recv_chunk(short* arr, unsigned long length, int from, int rank)$/;"	f	signature:(short* arr, unsigned long length, int from, int rank)
+MPI_Recv_chunk	mpi_wrappers.hpp	/^void MPI_Recv_chunk(unsigned long* arr, unsigned long length, int from, int rank)$/;"	f	signature:(unsigned long* arr, unsigned long length, int from, int rank)
+MPI_Send_chunk	mpi_wrappers.hpp	/^void MPI_Send_chunk(float* arr, unsigned long length, int to, int rank)$/;"	f	signature:(float* arr, unsigned long length, int to, int rank)
+MPI_Send_chunk	mpi_wrappers.hpp	/^void MPI_Send_chunk(int* arr, unsigned long length, int to, int rank)$/;"	f	signature:(int* arr, unsigned long length, int to, int rank)
+MPI_Send_chunk	mpi_wrappers.hpp	/^void MPI_Send_chunk(short* arr, unsigned long length, int to, int rank)$/;"	f	signature:(short* arr, unsigned long length, int to, int rank)
+MPI_Send_chunk	mpi_wrappers.hpp	/^void MPI_Send_chunk(unsigned long* arr, unsigned long length, int to, int rank)$/;"	f	signature:(unsigned long* arr, unsigned long length, int to, int rank)
+NULL_VAL	fascia.h	9;"	d
+TIME_INNERLOOP	fascia.h	14;"	d
+active_children	partitioner.hpp	/^  vector<int> active_children;$/;"	m	class:partitioner	access:private
+adjacencies	graph.hpp	/^  int* adjacencies() const$/;"	f	class:Graph	access:public	signature:() const
+adjacency_array	graph.hpp	/^  int* adjacency_array;$/;"	m	class:Graph	access:private
+adjacent_vertices	graph.hpp	/^  int* adjacent_vertices(int v)$/;"	f	class:Graph	access:public	signature:(int v)
+append_to_table	dynamic_table_part.hpp	/^  void append_to_table(unsigned long count, int num_vert_rec, $/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long count, int num_vert_rec, int* part_offsets, int from_rank, int* comm_verts_rec, float* counts_comp, short* colorsets_comp, unsigned long* offsets_comp)
+begin_vert	colorcount_part.hpp	/^  int begin_vert;$/;"	m	class:colorcount_part	access:private
+begin_vert	dynamic_table_part.hpp	/^  int begin_vert;$/;"	m	class:dynamic_table_part	access:private
+calculate_automorphisms	colorcount.hpp	/^        bool calculate_automorphisms;$/;"	m	class:colorcount	access:private
+calculate_automorphisms	colorcount_part.hpp	/^  bool calculate_automorphisms;$/;"	m	class:colorcount_part	access:private
+check_all_isomorphisms	util.hpp	/^bool check_all_isomorphisms(Graph& t, Graph& h, vector<int>& mapping, vector<int>& rest)$/;"	f	signature:(Graph& t, Graph& h, vector<int>& mapping, vector<int>& rest)
+check_nums	partitioner.hpp	/^  void check_nums(int root, vector<int>& srcs, vector<int>& dsts, $/;"	f	class:partitioner	access:private	signature:(int root, vector<int>& srcs, vector<int>& dsts, int* labels, int* labels_sub)
+check_rooted_isomorphism	util.hpp	/^bool check_rooted_isomorphism(Graph& t, Graph& h)$/;"	f	signature:(Graph& t, Graph& h)
+choose	util.hpp	/^int choose(int n, int k)$/;"	f	signature:(int n, int k)
+choose_table	colorcount.hpp	/^        int** choose_table;$/;"	m	class:colorcount	access:private
+choose_table	colorcount_part.hpp	/^  int** choose_table;$/;"	m	class:colorcount_part	access:private
+choose_table	dynamic_table.hpp	/^  int** choose_table;$/;"	m	class:dynamic_table	access:protected
+choose_table	dynamic_table_part.hpp	/^  int** choose_table;$/;"	m	class:dynamic_table_part	access:private
+clear	graph.hpp	/^  void clear()$/;"	f	class:Graph	access:public	signature:()
+clear_sub	dynamic_table.hpp	/^  virtual void clear_sub(int subtemplate){};$/;"	f	class:dynamic_table	access:public	signature:(int subtemplate)
+clear_sub	dynamic_table_array.hpp	/^  void clear_sub(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+clear_sub	dynamic_table_part.hpp	/^  void clear_sub(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+clear_table	dynamic_table.hpp	/^  virtual void clear_table(void){};  $/;"	f	class:dynamic_table	access:public	signature:(void)
+clear_table	dynamic_table_array.hpp	/^  void clear_table()$/;"	f	class:dynamic_table_array	access:public	signature:()
+clear_table	dynamic_table_part.hpp	/^  void clear_table()$/;"	f	class:dynamic_table_part	access:public	signature:()
+clear_temparrays	partitioner.hpp	/^  void clear_temparrays()$/;"	f	class:partitioner	access:public	signature:()
+color_sets	colorcount.hpp	/^        int***** color_sets;$/;"	m	class:colorcount	access:private
+color_sets	colorcount_part.hpp	/^  int***** color_sets;$/;"	m	class:colorcount_part	access:private
+colorcount	colorcount.hpp	/^        colorcount() {};  $/;"	f	class:colorcount	access:public	signature:()
+colorcount	colorcount.hpp	/^class colorcount{$/;"	c
+colorcount::calculate_automorphisms	colorcount.hpp	/^        bool calculate_automorphisms;$/;"	m	class:colorcount	access:private
+colorcount::choose_table	colorcount.hpp	/^        int** choose_table;$/;"	m	class:colorcount	access:private
+colorcount::color_sets	colorcount.hpp	/^        int***** color_sets;$/;"	m	class:colorcount	access:private
+colorcount::colorcount	colorcount.hpp	/^        colorcount() {};  $/;"	f	class:colorcount	access:public	signature:()
+colorcount::colorful_count	colorcount.hpp	/^        double colorful_count(int s)$/;"	f	class:colorcount	access:private	signature:(int s)
+colorcount::colors_g	colorcount.hpp	/^        int* colors_g;$/;"	m	class:colorcount	access:private
+colorcount::comb_num_indexes	colorcount.hpp	/^        int**** comb_num_indexes;$/;"	m	class:colorcount	access:private
+colorcount::comb_num_indexes_set	colorcount.hpp	/^        int** comb_num_indexes_set;$/;"	m	class:colorcount	access:private
+colorcount::create_all_color_sets	colorcount.hpp	/^        void create_all_color_sets()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::create_all_index_sets	colorcount.hpp	/^        void create_all_index_sets()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::create_comb_num_system_indexes	colorcount.hpp	/^        void create_comb_num_system_indexes()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::create_num_verts_table	colorcount.hpp	/^        void create_num_verts_table()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::create_tables	colorcount.hpp	/^        void create_tables()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::cur_iter	colorcount.hpp	/^        int cur_iter;$/;"	m	class:colorcount	access:private
+colorcount::delete_all_color_sets	colorcount.hpp	/^        void delete_all_color_sets()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::delete_all_index_sets	colorcount.hpp	/^        void delete_all_index_sets()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::delete_comb_num_system_indexes	colorcount.hpp	/^        void delete_comb_num_system_indexes()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::delete_tables	colorcount.hpp	/^        void delete_tables()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::do_full_count	colorcount.hpp	/^        double do_full_count(Graph* sub_graph, int* labels, int N)$/;"	f	class:colorcount	access:public	signature:(Graph* sub_graph, int* labels, int N)
+colorcount::do_graphlet_freq	colorcount.hpp	/^        bool do_graphlet_freq;$/;"	m	class:colorcount	access:private
+colorcount::do_vert_output	colorcount.hpp	/^        bool do_vert_output;$/;"	m	class:colorcount	access:private
+colorcount::dt	colorcount.hpp	/^        dynamic_table_array dt;$/;"	m	class:colorcount	access:private
+colorcount::final_vert_counts	colorcount.hpp	/^        double* final_vert_counts;$/;"	m	class:colorcount	access:private
+colorcount::g	colorcount.hpp	/^        Graph* g;  \/\/ full graph$/;"	m	class:colorcount	access:private
+colorcount::get_vert_counts	colorcount.hpp	/^        double* get_vert_counts()$/;"	f	class:colorcount	access:public	signature:()
+colorcount::index_sets	colorcount.hpp	/^        int**** index_sets;$/;"	m	class:colorcount	access:private
+colorcount::init	colorcount.hpp	/^        void init(Graph& full_graph, int* labels, bool label, $/;"	f	class:colorcount	access:public	signature:(Graph& full_graph, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int omp_thds)
+colorcount::init	colorcount.hpp	/^        void init(Graph& full_graph, int* labels, bool label, $/;"	f	class:colorcount	access:public	signature:(Graph& full_graph, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int thread_id, int omp_thds)
+colorcount::init_table_node	colorcount.hpp	/^        void init_table_node(int s)$/;"	f	class:colorcount	access:private	signature:(int s)
+colorcount::labeled	colorcount.hpp	/^        bool labeled;$/;"	m	class:colorcount	access:private
+colorcount::labels_g	colorcount.hpp	/^        int* labels_g;  $/;"	m	class:colorcount	access:private
+colorcount::labels_t	colorcount.hpp	/^        int* labels_t;$/;"	m	class:colorcount	access:private
+colorcount::max_degree	colorcount.hpp	/^        int max_degree;$/;"	m	class:colorcount	access:private
+colorcount::num_colors	colorcount.hpp	/^        int num_colors;$/;"	m	class:colorcount	access:private
+colorcount::num_iter	colorcount.hpp	/^        int num_iter;$/;"	m	class:colorcount	access:private
+colorcount::num_verts_graph	colorcount.hpp	/^        int num_verts_graph;$/;"	m	class:colorcount	access:private
+colorcount::num_verts_table	colorcount.hpp	/^        int* num_verts_table;  $/;"	m	class:colorcount	access:private
+colorcount::omp_nums	colorcount.hpp	/^        int omp_nums;$/;"	m	class:colorcount	access:private
+colorcount::part	colorcount.hpp	/^        partitioner part;$/;"	m	class:colorcount	access:private
+colorcount::read_count	colorcount.hpp	/^        int read_count;$/;"	m	class:colorcount	access:private
+colorcount::set_count	colorcount.hpp	/^        int set_count;$/;"	m	class:colorcount	access:private
+colorcount::subtemplate_count	colorcount.hpp	/^        int subtemplate_count;$/;"	m	class:colorcount	access:private
+colorcount::subtemplates	colorcount.hpp	/^        Graph* subtemplates;$/;"	m	class:colorcount	access:private
+colorcount::t	colorcount.hpp	/^        Graph* t;  \/\/ template$/;"	m	class:colorcount	access:private
+colorcount::template_count	colorcount.hpp	/^        double template_count()$/;"	f	class:colorcount	access:private	signature:()
+colorcount::total_count	colorcount.hpp	/^        int total_count;$/;"	m	class:colorcount	access:private
+colorcount::~colorcount	colorcount.hpp	/^        ~colorcount()$/;"	f	class:colorcount	access:public	signature:()
+colorcount_part	colorcount_part.hpp	/^  colorcount_part() {};  $/;"	f	class:colorcount_part	access:public	signature:()
+colorcount_part	colorcount_part.hpp	/^class colorcount_part{$/;"	c
+colorcount_part::begin_vert	colorcount_part.hpp	/^  int begin_vert;$/;"	m	class:colorcount_part	access:private
+colorcount_part::calculate_automorphisms	colorcount_part.hpp	/^  bool calculate_automorphisms;$/;"	m	class:colorcount_part	access:private
+colorcount_part::choose_table	colorcount_part.hpp	/^  int** choose_table;$/;"	m	class:colorcount_part	access:private
+colorcount_part::color_sets	colorcount_part.hpp	/^  int***** color_sets;$/;"	m	class:colorcount_part	access:private
+colorcount_part::colorcount_part	colorcount_part.hpp	/^  colorcount_part() {};  $/;"	f	class:colorcount_part	access:public	signature:()
+colorcount_part::colorful_count_array_part	colorcount_part.hpp	/^  double colorful_count_array_part(int s)$/;"	f	class:colorcount_part	access:private	signature:(int s)
+colorcount_part::colors_g	colorcount_part.hpp	/^  int* colors_g;  $/;"	m	class:colorcount_part	access:private
+colorcount_part::comb_num_indexes	colorcount_part.hpp	/^  int**** comb_num_indexes;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comb_num_indexes_set	colorcount_part.hpp	/^  int** comb_num_indexes_set;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_mem_rss	colorcount_part.hpp	/^  double comm_mem_rss;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_num_rec	colorcount_part.hpp	/^  int* comm_num_rec;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_num_send	colorcount_part.hpp	/^  int* comm_num_send;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_sizes_rec	colorcount_part.hpp	/^  unsigned long* comm_sizes_rec;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_sizes_send	colorcount_part.hpp	/^  unsigned long* comm_sizes_send;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_start	colorcount_part.hpp	/^  double comm_start;          $/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_time	colorcount_part.hpp	/^  double comm_time;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_time_prev	colorcount_part.hpp	/^  double comm_time_prev;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_verts_rec	colorcount_part.hpp	/^  int** comm_verts_rec;$/;"	m	class:colorcount_part	access:private
+colorcount_part::comm_verts_send	colorcount_part.hpp	/^  int** comm_verts_send;$/;"	m	class:colorcount_part	access:private
+colorcount_part::compute_time	colorcount_part.hpp	/^  double compute_time;$/;"	m	class:colorcount_part	access:private
+colorcount_part::compute_time_prev	colorcount_part.hpp	/^  double compute_time_prev;$/;"	m	class:colorcount_part	access:private
+colorcount_part::create_all_color_sets	colorcount_part.hpp	/^  void create_all_color_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::create_all_index_sets	colorcount_part.hpp	/^  void create_all_index_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::create_comb_num_system_indexes	colorcount_part.hpp	/^  void create_comb_num_system_indexes()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::create_num_verts_table	colorcount_part.hpp	/^  void create_num_verts_table()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::create_tables	colorcount_part.hpp	/^  void create_tables()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::delete_all_color_sets	colorcount_part.hpp	/^  void delete_all_color_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::delete_all_index_sets	colorcount_part.hpp	/^  void delete_all_index_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::delete_comb_num_system_indexes	colorcount_part.hpp	/^  void delete_comb_num_system_indexes()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::delete_tables	colorcount_part.hpp	/^  void delete_tables()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::do_full_count	colorcount_part.hpp	/^  double do_full_count(Graph* sub_graph, int* labels, int N)$/;"	f	class:colorcount_part	access:public	signature:(Graph* sub_graph, int* labels, int N)
+colorcount_part::do_graphlet_freq	colorcount_part.hpp	/^  bool do_graphlet_freq;$/;"	m	class:colorcount_part	access:private
+colorcount_part::do_vert_output	colorcount_part.hpp	/^  bool do_vert_output;$/;"	m	class:colorcount_part	access:private
+colorcount_part::dt	colorcount_part.hpp	/^  dynamic_table_part dt;$/;"	m	class:colorcount_part	access:private
+colorcount_part::end_vert	colorcount_part.hpp	/^  int end_vert;$/;"	m	class:colorcount_part	access:private
+colorcount_part::final_vert_counts	colorcount_part.hpp	/^  double* final_vert_counts;$/;"	m	class:colorcount_part	access:private
+colorcount_part::g	colorcount_part.hpp	/^  Graph* g;$/;"	m	class:colorcount_part	access:private
+colorcount_part::get_vert_counts	colorcount_part.hpp	/^  double* get_vert_counts()$/;"	f	class:colorcount_part	access:public	signature:()
+colorcount_part::index_sets	colorcount_part.hpp	/^  int**** index_sets;$/;"	m	class:colorcount_part	access:private
+colorcount_part::init	colorcount_part.hpp	/^  void init(Graph& full_graph, int* Part_offsets, int num_parts,$/;"	f	class:colorcount_part	access:public	signature:(Graph& full_graph, int* Part_offsets, int num_parts, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int omp_thds, int alltoall)
+colorcount_part::init_table_node	colorcount_part.hpp	/^  void init_table_node(int s)$/;"	f	class:colorcount_part	access:private	signature:(int s)
+colorcount_part::labeled	colorcount_part.hpp	/^  bool labeled;$/;"	m	class:colorcount_part	access:private
+colorcount_part::labels_g	colorcount_part.hpp	/^  int* labels_g;  $/;"	m	class:colorcount_part	access:private
+colorcount_part::labels_t	colorcount_part.hpp	/^  int* labels_t;$/;"	m	class:colorcount_part	access:private
+colorcount_part::max_degree	colorcount_part.hpp	/^  int max_degree;$/;"	m	class:colorcount_part	access:private
+colorcount_part::mem_rss	colorcount_part.hpp	/^  double mem_rss;$/;"	m	class:colorcount_part	access:private
+colorcount_part::num_colors	colorcount_part.hpp	/^  int num_colors;$/;"	m	class:colorcount_part	access:private
+colorcount_part::num_iter	colorcount_part.hpp	/^  int num_iter;$/;"	m	class:colorcount_part	access:private
+colorcount_part::num_verts_graph	colorcount_part.hpp	/^  int num_verts_graph;$/;"	m	class:colorcount_part	access:private
+colorcount_part::num_verts_part	colorcount_part.hpp	/^  int num_verts_part;$/;"	m	class:colorcount_part	access:private
+colorcount_part::num_verts_table	colorcount_part.hpp	/^  int* num_verts_table;  $/;"	m	class:colorcount_part	access:private
+colorcount_part::omp_nums	colorcount_part.hpp	/^  int omp_nums;$/;"	m	class:colorcount_part	access:private
+colorcount_part::part	colorcount_part.hpp	/^  partitioner part;$/;"	m	class:colorcount_part	access:private
+colorcount_part::part_offsets	colorcount_part.hpp	/^  int* part_offsets;$/;"	m	class:colorcount_part	access:private
+colorcount_part::peak_comm_mem	colorcount_part.hpp	/^  double peak_comm_mem;$/;"	m	class:colorcount_part	access:private
+colorcount_part::peak_mem	colorcount_part.hpp	/^  double peak_mem;$/;"	m	class:colorcount_part	access:private
+colorcount_part::read_count	colorcount_part.hpp	/^  unsigned long read_count;$/;"	m	class:colorcount_part	access:private
+colorcount_part::set_count	colorcount_part.hpp	/^  unsigned long set_count;$/;"	m	class:colorcount_part	access:private
+colorcount_part::sizes_verts	colorcount_part.hpp	/^  int* sizes_verts;$/;"	m	class:colorcount_part	access:private
+colorcount_part::subtemplate_count	colorcount_part.hpp	/^  int subtemplate_count;$/;"	m	class:colorcount_part	access:private
+colorcount_part::subtemplates	colorcount_part.hpp	/^  Graph* subtemplates;$/;"	m	class:colorcount_part	access:private
+colorcount_part::t	colorcount_part.hpp	/^  Graph* t;$/;"	m	class:colorcount_part	access:private
+colorcount_part::template_count	colorcount_part.hpp	/^  double template_count()$/;"	f	class:colorcount_part	access:private	signature:()
+colorcount_part::total_count	colorcount_part.hpp	/^  unsigned long total_count;$/;"	m	class:colorcount_part	access:private
+colorcount_part::total_recv	colorcount_part.hpp	/^  unsigned long* total_recv;$/;"	m	class:colorcount_part	access:private
+colorcount_part::total_send	colorcount_part.hpp	/^  unsigned long* total_send;$/;"	m	class:colorcount_part	access:private
+colorcount_part::transfer_size_sum	colorcount_part.hpp	/^  double transfer_size_sum;$/;"	m	class:colorcount_part	access:private
+colorcount_part::transfer_size_sum_prev	colorcount_part.hpp	/^  double transfer_size_sum_prev;$/;"	m	class:colorcount_part	access:private
+colorcount_part::useAlltoAll	colorcount_part.hpp	/^  int useAlltoAll;$/;"	m	class:colorcount_part	access:private
+colorcount_part::vert_offsets	colorcount_part.hpp	/^  int* vert_offsets;$/;"	m	class:colorcount_part	access:private
+colorcount_part::~colorcount_part	colorcount_part.hpp	/^  ~colorcount_part()$/;"	f	class:colorcount_part	access:public	signature:()
+colorful_count	colorcount.hpp	/^        double colorful_count(int s)$/;"	f	class:colorcount	access:private	signature:(int s)
+colorful_count_array_part	colorcount_part.hpp	/^  double colorful_count_array_part(int s)$/;"	f	class:colorcount_part	access:private	signature:(int s)
+colors_g	colorcount.hpp	/^        int* colors_g;$/;"	m	class:colorcount	access:private
+colors_g	colorcount_part.hpp	/^  int* colors_g;  $/;"	m	class:colorcount_part	access:private
+colorsets	dynamic_table_part.hpp	/^  short** colorsets;$/;"	m	class:dynamic_table_part	access:private
+colorsets_a	dynamic_table_part.hpp	/^  short* colorsets_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+colorsets_p	dynamic_table_part.hpp	/^  short* colorsets_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+comb_num_indexes	colorcount.hpp	/^        int**** comb_num_indexes;$/;"	m	class:colorcount	access:private
+comb_num_indexes	colorcount_part.hpp	/^  int**** comb_num_indexes;$/;"	m	class:colorcount_part	access:private
+comb_num_indexes_set	colorcount.hpp	/^        int** comb_num_indexes_set;$/;"	m	class:colorcount	access:private
+comb_num_indexes_set	colorcount_part.hpp	/^  int** comb_num_indexes_set;$/;"	m	class:colorcount_part	access:private
+comm_mem_rss	colorcount_part.hpp	/^  double comm_mem_rss;$/;"	m	class:colorcount_part	access:private
+comm_num_rec	colorcount_part.hpp	/^  int* comm_num_rec;$/;"	m	class:colorcount_part	access:private
+comm_num_send	colorcount_part.hpp	/^  int* comm_num_send;$/;"	m	class:colorcount_part	access:private
+comm_sizes_rec	colorcount_part.hpp	/^  unsigned long* comm_sizes_rec;$/;"	m	class:colorcount_part	access:private
+comm_sizes_send	colorcount_part.hpp	/^  unsigned long* comm_sizes_send;$/;"	m	class:colorcount_part	access:private
+comm_start	colorcount_part.hpp	/^  double comm_start;          $/;"	m	class:colorcount_part	access:private
+comm_time	colorcount_part.hpp	/^  double comm_time;$/;"	m	class:colorcount_part	access:private
+comm_time_prev	colorcount_part.hpp	/^  double comm_time_prev;$/;"	m	class:colorcount_part	access:private
+comm_verts_rec	colorcount_part.hpp	/^  int** comm_verts_rec;$/;"	m	class:colorcount_part	access:private
+comm_verts_send	colorcount_part.hpp	/^  int** comm_verts_send;$/;"	m	class:colorcount_part	access:private
+compress_for_send	dynamic_table_part.hpp	/^  void compress_for_send(unsigned long tot_count, $/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long tot_count, int num_vert_send, int* comm_verts_send, int send_to, float* counts_comp, short* colorsets_comp, long unsigned* offsets_comp)
+compute_time	colorcount_part.hpp	/^  double compute_time;$/;"	m	class:colorcount_part	access:private
+compute_time_prev	colorcount_part.hpp	/^  double compute_time_prev;$/;"	m	class:colorcount_part	access:private
+contains	util.hpp	/^bool contains(int* arr, int length, int item)$/;"	f	signature:(int* arr, int length, int item)
+contains	util.hpp	/^bool contains(vector<int>& arr, int item)$/;"	f	signature:(vector<int>& arr, int item)
+count_all_automorphisms	util.hpp	/^int count_all_automorphisms(Graph& t, vector<int>& mapping, vector<int>& rest)$/;"	f	signature:(Graph& t, vector<int>& mapping, vector<int>& rest)
+count_automorphisms	util.hpp	/^int count_automorphisms(Graph& t)$/;"	f	signature:(Graph& t)
+count_needed	partitioner.hpp	/^  bool* count_needed;$/;"	m	class:partitioner	access:private
+create_all_color_sets	colorcount.hpp	/^        void create_all_color_sets()$/;"	f	class:colorcount	access:private	signature:()
+create_all_color_sets	colorcount_part.hpp	/^  void create_all_color_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+create_all_index_sets	colorcount.hpp	/^        void create_all_index_sets()$/;"	f	class:colorcount	access:private	signature:()
+create_all_index_sets	colorcount_part.hpp	/^  void create_all_index_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+create_comb_num_system_indexes	colorcount.hpp	/^        void create_comb_num_system_indexes()$/;"	f	class:colorcount	access:private	signature:()
+create_comb_num_system_indexes	colorcount_part.hpp	/^  void create_comb_num_system_indexes()$/;"	f	class:colorcount_part	access:private	signature:()
+create_num_verts_table	colorcount.hpp	/^        void create_num_verts_table()$/;"	f	class:colorcount	access:private	signature:()
+create_num_verts_table	colorcount_part.hpp	/^  void create_num_verts_table()$/;"	f	class:colorcount_part	access:private	signature:()
+create_tables	colorcount.hpp	/^        void create_tables()$/;"	f	class:colorcount	access:private	signature:()
+create_tables	colorcount_part.hpp	/^  void create_tables()$/;"	f	class:colorcount_part	access:private	signature:()
+cur_a	dynamic_table_part.hpp	/^  int cur_a;$/;"	m	class:dynamic_table_part	access:private
+cur_colorsets_a	dynamic_table_part.hpp	/^  short* cur_colorsets_a;$/;"	m	class:dynamic_table_part	access:private
+cur_colorsets_p	dynamic_table_part.hpp	/^  short* cur_colorsets_p;$/;"	m	class:dynamic_table_part	access:private
+cur_iter	colorcount.hpp	/^        int cur_iter;$/;"	m	class:colorcount	access:private
+cur_num_colorsets	dynamic_table_part.hpp	/^  int cur_num_colorsets;$/;"	m	class:dynamic_table_part	access:private
+cur_num_colorsets_a	dynamic_table_part.hpp	/^  int cur_num_colorsets_a;$/;"	m	class:dynamic_table_part	access:private
+cur_num_colorsets_p	dynamic_table_part.hpp	/^  int cur_num_colorsets_p;$/;"	m	class:dynamic_table_part	access:private
+cur_p	dynamic_table_part.hpp	/^  int cur_p;$/;"	m	class:dynamic_table_part	access:private
+cur_sub	dynamic_table_array.hpp	/^  int cur_sub;$/;"	m	class:dynamic_table_array	access:private
+cur_sub	dynamic_table_part.hpp	/^  int cur_sub;$/;"	m	class:dynamic_table_part	access:private
+cur_table	dynamic_table_array.hpp	/^  float** cur_table;$/;"	m	class:dynamic_table_array	access:private
+cur_table	dynamic_table_part.hpp	/^  float* cur_table;$/;"	m	class:dynamic_table_part	access:private
+cur_table_a	dynamic_table_part.hpp	/^  float* cur_table_a;$/;"	m	class:dynamic_table_part	access:private
+cur_table_active	dynamic_table_array.hpp	/^  float** cur_table_active;$/;"	m	class:dynamic_table_array	access:private
+cur_table_p	dynamic_table_part.hpp	/^  float* cur_table_p;$/;"	m	class:dynamic_table_part	access:private
+cur_table_passive	dynamic_table_array.hpp	/^  float** cur_table_passive;$/;"	m	class:dynamic_table_array	access:private
+cur_total_count	dynamic_table_part.hpp	/^  unsigned long cur_total_count;$/;"	m	class:dynamic_table_part	access:private
+cur_vert_offsets_a	dynamic_table_part.hpp	/^  unsigned long* cur_vert_offsets_a;$/;"	m	class:dynamic_table_part	access:private
+cur_vert_offsets_p	dynamic_table_part.hpp	/^  unsigned long* cur_vert_offsets_p;$/;"	m	class:dynamic_table_part	access:private
+current_creation_index	partitioner.hpp	/^  int current_creation_index;$/;"	m	class:partitioner	access:private
+cut_edge_labels	partitioner.hpp	/^  vector<int> cut_edge_labels;$/;"	m	class:partitioner	access:private
+debug	fascia-mpi.cpp	/^bool verbose, debug;$/;"	v
+degree_list	graph.hpp	/^  unsigned* degree_list;$/;"	m	class:Graph	access:private
+degrees	graph.hpp	/^  unsigned* degrees() const$/;"	f	class:Graph	access:public	signature:() const
+delete_all_color_sets	colorcount.hpp	/^        void delete_all_color_sets()$/;"	f	class:colorcount	access:private	signature:()
+delete_all_color_sets	colorcount_part.hpp	/^  void delete_all_color_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+delete_all_index_sets	colorcount.hpp	/^        void delete_all_index_sets()$/;"	f	class:colorcount	access:private	signature:()
+delete_all_index_sets	colorcount_part.hpp	/^  void delete_all_index_sets()$/;"	f	class:colorcount_part	access:private	signature:()
+delete_comb_num_system_indexes	colorcount.hpp	/^        void delete_comb_num_system_indexes()$/;"	f	class:colorcount	access:private	signature:()
+delete_comb_num_system_indexes	colorcount_part.hpp	/^  void delete_comb_num_system_indexes()$/;"	f	class:colorcount_part	access:private	signature:()
+delete_tables	colorcount.hpp	/^        void delete_tables()$/;"	f	class:colorcount	access:private	signature:()
+delete_tables	colorcount_part.hpp	/^  void delete_tables()$/;"	f	class:colorcount_part	access:private	signature:()
+do_full_count	colorcount.hpp	/^        double do_full_count(Graph* sub_graph, int* labels, int N)$/;"	f	class:colorcount	access:public	signature:(Graph* sub_graph, int* labels, int N)
+do_full_count	colorcount_part.hpp	/^  double do_full_count(Graph* sub_graph, int* labels, int N)$/;"	f	class:colorcount_part	access:public	signature:(Graph* sub_graph, int* labels, int N)
+do_gdd_sort	output.hpp	/^  void do_gdd_sort(vector<pair<double, int> >& gdd)$/;"	f	class:output	access:private	signature:(vector<pair<double, int> >& gdd)
+do_graphlet_freq	colorcount.hpp	/^        bool do_graphlet_freq;$/;"	m	class:colorcount	access:private
+do_graphlet_freq	colorcount_part.hpp	/^  bool do_graphlet_freq;$/;"	m	class:colorcount_part	access:private
+do_vert_output	colorcount.hpp	/^        bool do_vert_output;$/;"	m	class:colorcount	access:private
+do_vert_output	colorcount_part.hpp	/^  bool do_vert_output;$/;"	m	class:colorcount_part	access:private
+dt	colorcount.hpp	/^        dynamic_table_array dt;$/;"	m	class:colorcount	access:private
+dt	colorcount_part.hpp	/^  dynamic_table_part dt;$/;"	m	class:colorcount_part	access:private
+dynamic_table	dynamic_table.hpp	/^  dynamic_table()$/;"	f	class:dynamic_table	access:public	signature:()
+dynamic_table	dynamic_table.hpp	/^class dynamic_table {$/;"	c
+dynamic_table::choose_table	dynamic_table.hpp	/^  int** choose_table;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::clear_sub	dynamic_table.hpp	/^  virtual void clear_sub(int subtemplate){};$/;"	f	class:dynamic_table	access:public	signature:(int subtemplate)
+dynamic_table::clear_table	dynamic_table.hpp	/^  virtual void clear_table(void){};  $/;"	f	class:dynamic_table	access:public	signature:(void)
+dynamic_table::dynamic_table	dynamic_table.hpp	/^  dynamic_table()$/;"	f	class:dynamic_table	access:public	signature:()
+dynamic_table::init	dynamic_table.hpp	/^  virtual void init(Graph* subtemplate, int num_subtemplates, int num_vertices, int num_colors){};$/;"	f	class:dynamic_table	access:public	signature:(Graph* subtemplate, int num_subtemplates, int num_vertices, int num_colors)
+dynamic_table::init_choose_table	dynamic_table.hpp	/^  void init_choose_table()$/;"	f	class:dynamic_table	access:protected	signature:()
+dynamic_table::init_num_colorsets	dynamic_table.hpp	/^  void init_num_colorsets()$/;"	f	class:dynamic_table	access:protected	signature:()
+dynamic_table::init_sub	dynamic_table.hpp	/^  virtual void init_sub(int subtemplate){};$/;"	f	class:dynamic_table	access:public	signature:(int subtemplate)
+dynamic_table::is_init	dynamic_table.hpp	/^  virtual bool is_init(void) = 0;$/;"	p	class:dynamic_table	access:public	signature:(void)
+dynamic_table::is_inited	dynamic_table.hpp	/^  bool is_inited;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::is_sub_init	dynamic_table.hpp	/^  virtual bool is_sub_init(int subtemplate) = 0;$/;"	p	class:dynamic_table	access:public	signature:(int subtemplate)
+dynamic_table::is_sub_inited	dynamic_table.hpp	/^  bool* is_sub_inited;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::num_colors	dynamic_table.hpp	/^  int num_colors;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::num_colorsets	dynamic_table.hpp	/^  int* num_colorsets;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::num_subs	dynamic_table.hpp	/^  int num_subs;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::num_verts	dynamic_table.hpp	/^  int num_verts;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::subtemplates	dynamic_table.hpp	/^  Graph* subtemplates;$/;"	m	class:dynamic_table	access:protected
+dynamic_table::~dynamic_table	dynamic_table.hpp	/^  ~dynamic_table()$/;"	f	class:dynamic_table	access:public	signature:()
+dynamic_table_array	dynamic_table_array.hpp	/^  dynamic_table_array()$/;"	f	class:dynamic_table_array	access:public	signature:()
+dynamic_table_array	dynamic_table_array.hpp	/^class dynamic_table_array : public dynamic_table {$/;"	c	inherits:dynamic_table
+dynamic_table_array::clear_sub	dynamic_table_array.hpp	/^  void clear_sub(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+dynamic_table_array::clear_table	dynamic_table_array.hpp	/^  void clear_table()$/;"	f	class:dynamic_table_array	access:public	signature:()
+dynamic_table_array::cur_sub	dynamic_table_array.hpp	/^  int cur_sub;$/;"	m	class:dynamic_table_array	access:private
+dynamic_table_array::cur_table	dynamic_table_array.hpp	/^  float** cur_table;$/;"	m	class:dynamic_table_array	access:private
+dynamic_table_array::cur_table_active	dynamic_table_array.hpp	/^  float** cur_table_active;$/;"	m	class:dynamic_table_array	access:private
+dynamic_table_array::cur_table_passive	dynamic_table_array.hpp	/^  float** cur_table_passive;$/;"	m	class:dynamic_table_array	access:private
+dynamic_table_array::dynamic_table_array	dynamic_table_array.hpp	/^  dynamic_table_array()$/;"	f	class:dynamic_table_array	access:public	signature:()
+dynamic_table_array::get	dynamic_table_array.hpp	/^  float get(int subtemplate, int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex, int comb_num_index)
+dynamic_table_array::get	dynamic_table_array.hpp	/^  float* get(int subtemplate, int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex)
+dynamic_table_array::get_active	dynamic_table_array.hpp	/^  float get_active(int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index)
+dynamic_table_array::get_active	dynamic_table_array.hpp	/^  float* get_active(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+dynamic_table_array::get_passive	dynamic_table_array.hpp	/^  float get_passive(int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index)
+dynamic_table_array::get_passive	dynamic_table_array.hpp	/^  float* get_passive(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+dynamic_table_array::init	dynamic_table_array.hpp	/^  void init(Graph* subs, int num_subtemplates, int num_vertices, int num_cols)$/;"	f	class:dynamic_table_array	access:public	signature:(Graph* subs, int num_subtemplates, int num_vertices, int num_cols)
+dynamic_table_array::init_sub	dynamic_table_array.hpp	/^  void init_sub(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+dynamic_table_array::init_sub	dynamic_table_array.hpp	/^  void init_sub(int subtemplate, int active_child, int passive_child)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int active_child, int passive_child)
+dynamic_table_array::is_init	dynamic_table_array.hpp	/^  bool is_init()$/;"	f	class:dynamic_table_array	access:public	signature:()
+dynamic_table_array::is_sub_init	dynamic_table_array.hpp	/^  bool is_sub_init(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+dynamic_table_array::is_vertex_init_active	dynamic_table_array.hpp	/^  bool is_vertex_init_active(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+dynamic_table_array::is_vertex_init_passive	dynamic_table_array.hpp	/^  bool is_vertex_init_passive(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+dynamic_table_array::set	dynamic_table_array.hpp	/^  void set(int subtemplate, int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex, int comb_num_index, float count)
+dynamic_table_array::set	dynamic_table_array.hpp	/^  void set(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index, float count)
+dynamic_table_array::table	dynamic_table_array.hpp	/^  float*** table; $/;"	m	class:dynamic_table_array	access:private
+dynamic_table_part	dynamic_table_part.hpp	/^  dynamic_table_part()$/;"	f	class:dynamic_table_part	access:public	signature:()
+dynamic_table_part	dynamic_table_part.hpp	/^class dynamic_table_part {$/;"	c
+dynamic_table_part::append_to_table	dynamic_table_part.hpp	/^  void append_to_table(unsigned long count, int num_vert_rec, $/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long count, int num_vert_rec, int* part_offsets, int from_rank, int* comm_verts_rec, float* counts_comp, short* colorsets_comp, unsigned long* offsets_comp)
+dynamic_table_part::begin_vert	dynamic_table_part.hpp	/^  int begin_vert;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::choose_table	dynamic_table_part.hpp	/^  int** choose_table;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::clear_sub	dynamic_table_part.hpp	/^  void clear_sub(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+dynamic_table_part::clear_table	dynamic_table_part.hpp	/^  void clear_table()$/;"	f	class:dynamic_table_part	access:public	signature:()
+dynamic_table_part::colorsets	dynamic_table_part.hpp	/^  short** colorsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::colorsets_a	dynamic_table_part.hpp	/^  short* colorsets_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::colorsets_p	dynamic_table_part.hpp	/^  short* colorsets_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::compress_for_send	dynamic_table_part.hpp	/^  void compress_for_send(unsigned long tot_count, $/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long tot_count, int num_vert_send, int* comm_verts_send, int send_to, float* counts_comp, short* colorsets_comp, long unsigned* offsets_comp)
+dynamic_table_part::cur_a	dynamic_table_part.hpp	/^  int cur_a;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_colorsets_a	dynamic_table_part.hpp	/^  short* cur_colorsets_a;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_colorsets_p	dynamic_table_part.hpp	/^  short* cur_colorsets_p;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_num_colorsets	dynamic_table_part.hpp	/^  int cur_num_colorsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_num_colorsets_a	dynamic_table_part.hpp	/^  int cur_num_colorsets_a;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_num_colorsets_p	dynamic_table_part.hpp	/^  int cur_num_colorsets_p;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_p	dynamic_table_part.hpp	/^  int cur_p;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_sub	dynamic_table_part.hpp	/^  int cur_sub;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_table	dynamic_table_part.hpp	/^  float* cur_table;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_table_a	dynamic_table_part.hpp	/^  float* cur_table_a;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_table_p	dynamic_table_part.hpp	/^  float* cur_table_p;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_total_count	dynamic_table_part.hpp	/^  unsigned long cur_total_count;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_vert_offsets_a	dynamic_table_part.hpp	/^  unsigned long* cur_vert_offsets_a;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::cur_vert_offsets_p	dynamic_table_part.hpp	/^  unsigned long* cur_vert_offsets_p;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::dynamic_table_part	dynamic_table_part.hpp	/^  dynamic_table_part()$/;"	f	class:dynamic_table_part	access:public	signature:()
+dynamic_table_part::end_vert	dynamic_table_part.hpp	/^  int end_vert;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::finalize	dynamic_table_part.hpp	/^  void finalize()$/;"	f	class:dynamic_table_part	access:public	signature:()
+dynamic_table_part::get_total_counts	dynamic_table_part.hpp	/^  unsigned long get_total_counts()$/;"	f	class:dynamic_table_part	access:public	signature:()
+dynamic_table_part::init_choose_table	dynamic_table_part.hpp	/^  void init_choose_table()$/;"	f	class:dynamic_table_part	access:private	signature:()
+dynamic_table_part::init_comp_table	dynamic_table_part.hpp	/^  void init_comp_table(unsigned long* part_counts)$/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long* part_counts)
+dynamic_table_part::init_num_colorsets	dynamic_table_part.hpp	/^  void init_num_colorsets()$/;"	f	class:dynamic_table_part	access:private	signature:()
+dynamic_table_part::init_part	dynamic_table_part.hpp	/^  void init_part(Graph* subs, int num_subtemplates, $/;"	f	class:dynamic_table_part	access:public	signature:(Graph* subs, int num_subtemplates, int num_vertices, int num_cols, int Begin_vert, int End_vert, int Rank, int Nprocs)
+dynamic_table_part::init_sub	dynamic_table_part.hpp	/^  int init_sub(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+dynamic_table_part::init_sub	dynamic_table_part.hpp	/^  int init_sub(int s, int a, int p)$/;"	f	class:dynamic_table_part	access:public	signature:(int s, int a, int p)
+dynamic_table_part::is_sub_inited	dynamic_table_part.hpp	/^  bool* is_sub_inited;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::is_vert_inited	dynamic_table_part.hpp	/^  bool* is_vert_inited;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::nprocs	dynamic_table_part.hpp	/^  int nprocs;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::num_colors	dynamic_table_part.hpp	/^  int num_colors;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::num_colorsets	dynamic_table_part.hpp	/^  int* num_colorsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::num_subs	dynamic_table_part.hpp	/^  int num_subs;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::num_verts	dynamic_table_part.hpp	/^  int num_verts;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::num_verts_part	dynamic_table_part.hpp	/^  int num_verts_part;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::print_table	dynamic_table_part.hpp	/^  void print_table(int outnum)$/;"	f	class:dynamic_table_part	access:public	signature:(int outnum)
+dynamic_table_part::rank	dynamic_table_part.hpp	/^  int rank;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::running_offset	dynamic_table_part.hpp	/^  unsigned long running_offset;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::set	dynamic_table_part.hpp	/^  void set(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_part	access:public	signature:(int vertex, int comb_num_index, float count)
+dynamic_table_part::set_node	dynamic_table_part.hpp	/^  void set_node(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_part	access:public	signature:(int vertex, int comb_num_index, float count)
+dynamic_table_part::set_sub_to_table_node	dynamic_table_part.hpp	/^  void set_sub_to_table_node(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+dynamic_table_part::set_table_node	dynamic_table_part.hpp	/^  void set_table_node(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+dynamic_table_part::set_total_counts	dynamic_table_part.hpp	/^  void set_total_counts(int total_count)$/;"	f	class:dynamic_table_part	access:public	signature:(int total_count)
+dynamic_table_part::sub_sizes	dynamic_table_part.hpp	/^  unsigned long* sub_sizes;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::sub_sizes_part	dynamic_table_part.hpp	/^  unsigned long* sub_sizes_part;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::subtemplates	dynamic_table_part.hpp	/^  Graph* subtemplates;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::table	dynamic_table_part.hpp	/^  float** table;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::table_counts_a	dynamic_table_part.hpp	/^  float* table_counts_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::table_counts_p	dynamic_table_part.hpp	/^  float* table_counts_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::table_node	dynamic_table_part.hpp	/^  int table_node;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::table_size_a	dynamic_table_part.hpp	/^  int table_size_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::table_size_p	dynamic_table_part.hpp	/^  int table_size_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+dynamic_table_part::temp_colorsets	dynamic_table_part.hpp	/^  short* temp_colorsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::temp_table	dynamic_table_part.hpp	/^  float* temp_table;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::temp_vert_offsets	dynamic_table_part.hpp	/^  long unsigned* temp_vert_offsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_table_part::vert_offsets	dynamic_table_part.hpp	/^  unsigned long** vert_offsets;$/;"	m	class:dynamic_table_part	access:private
+dynamic_to_static	util.hpp	/^int* dynamic_to_static(vector<int>& arr)$/;"	f	signature:(vector<int>& arr)
+end_vert	colorcount_part.hpp	/^  int end_vert;$/;"	m	class:colorcount_part	access:private
+end_vert	dynamic_table_part.hpp	/^  int end_vert;$/;"	m	class:dynamic_table_part	access:private
+extract_uniques	util.hpp	/^void extract_uniques(vector<int>& source, vector<int>& dest)$/;"	f	signature:(vector<int>& source, vector<int>& dest)
+factorial	util.hpp	/^int factorial(int x)$/;"	f	signature:(int x)
+fin_arrays	partitioner.hpp	/^  void fin_arrays()$/;"	f	class:partitioner	access:private	signature:()
+final_vert_counts	colorcount.hpp	/^        double* final_vert_counts;$/;"	m	class:colorcount	access:private
+final_vert_counts	colorcount_part.hpp	/^  double* final_vert_counts;$/;"	m	class:colorcount_part	access:private
+finalize	dynamic_table_part.hpp	/^  void finalize()$/;"	f	class:dynamic_table_part	access:public	signature:()
+g	colorcount.hpp	/^        Graph* g;  \/\/ full graph$/;"	m	class:colorcount	access:private
+g	colorcount_part.hpp	/^  Graph* g;$/;"	m	class:colorcount_part	access:private
+get	dynamic_table_array.hpp	/^  float get(int subtemplate, int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex, int comb_num_index)
+get	dynamic_table_array.hpp	/^  float* get(int subtemplate, int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex)
+get_active	dynamic_table_array.hpp	/^  float get_active(int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index)
+get_active	dynamic_table_array.hpp	/^  float* get_active(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+get_active_index	partitioner.hpp	/^  int get_active_index(int a)$/;"	f	class:partitioner	access:public	signature:(int a)
+get_color_index	util.hpp	/^int get_color_index(int* colorset, int length)$/;"	f	signature:(int* colorset, int length)
+get_count_index	output.hpp	/^  int get_count_index(vector<pair<double, int> >& gdd, double count)$/;"	f	class:output	access:private	signature:(vector<pair<double, int> >& gdd, double count)
+get_labels	partitioner.hpp	/^  int* get_labels(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+get_max	util.hpp	/^int get_max(int* arr, int length)$/;"	f	signature:(int* arr, int length)
+get_max	util.hpp	/^int get_max(vector<int> arr)$/;"	f	signature:(vector<int> arr)
+get_max	util.hpp	/^int get_max(vector<int> arr1, vector<int> arr2)$/;"	f	signature:(vector<int> arr1, vector<int> arr2)
+get_num_verts_active	partitioner.hpp	/^  int get_num_verts_active(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+get_num_verts_passive	partitioner.hpp	/^  int get_num_verts_passive(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+get_part	util.hpp	/^int get_part(int id, int* part_offsets, int num_parts)$/;"	f	signature:(int id, int* part_offsets, int num_parts)
+get_passive	dynamic_table_array.hpp	/^  float get_passive(int vertex, int comb_num_index)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index)
+get_passive	dynamic_table_array.hpp	/^  float* get_passive(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+get_passive_index	partitioner.hpp	/^  int get_passive_index(int p)$/;"	f	class:partitioner	access:public	signature:(int p)
+get_subtemplate_count	partitioner.hpp	/^  int get_subtemplate_count() { return subtemplate_count; }$/;"	f	class:partitioner	access:public	signature:()
+get_subtemplates	partitioner.hpp	/^  Graph* get_subtemplates() { return subtemplates; }$/;"	f	class:partitioner	access:public	signature:()
+get_total_counts	dynamic_table_part.hpp	/^  unsigned long get_total_counts()$/;"	f	class:dynamic_table_part	access:public	signature:()
+get_vert_counts	colorcount.hpp	/^        double* get_vert_counts()$/;"	f	class:colorcount	access:public	signature:()
+get_vert_counts	colorcount_part.hpp	/^  double* get_vert_counts()$/;"	f	class:colorcount_part	access:public	signature:()
+index_sets	colorcount.hpp	/^        int**** index_sets;$/;"	m	class:colorcount	access:private
+index_sets	colorcount_part.hpp	/^  int**** index_sets;$/;"	m	class:colorcount_part	access:private
+init	colorcount.hpp	/^        void init(Graph& full_graph, int* labels, bool label, $/;"	f	class:colorcount	access:public	signature:(Graph& full_graph, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int omp_thds)
+init	colorcount.hpp	/^        void init(Graph& full_graph, int* labels, bool label, $/;"	f	class:colorcount	access:public	signature:(Graph& full_graph, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int thread_id, int omp_thds)
+init	colorcount_part.hpp	/^  void init(Graph& full_graph, int* Part_offsets, int num_parts,$/;"	f	class:colorcount_part	access:public	signature:(Graph& full_graph, int* Part_offsets, int num_parts, int* labels, bool label, bool calc_auto, bool do_gdd, bool do_vert, int omp_thds, int alltoall)
+init	dynamic_table.hpp	/^  virtual void init(Graph* subtemplate, int num_subtemplates, int num_vertices, int num_colors){};$/;"	f	class:dynamic_table	access:public	signature:(Graph* subtemplate, int num_subtemplates, int num_vertices, int num_colors)
+init	dynamic_table_array.hpp	/^  void init(Graph* subs, int num_subtemplates, int num_vertices, int num_cols)$/;"	f	class:dynamic_table_array	access:public	signature:(Graph* subs, int num_subtemplates, int num_vertices, int num_cols)
+init	graph.hpp	/^  void init(int n, unsigned m, int* srcs, int* dsts)$/;"	f	class:Graph	access:public	signature:(int n, unsigned m, int* srcs, int* dsts)
+init_arrays	partitioner.hpp	/^  void init_arrays()$/;"	f	class:partitioner	access:private	signature:()
+init_choose_table	dynamic_table.hpp	/^  void init_choose_table()$/;"	f	class:dynamic_table	access:protected	signature:()
+init_choose_table	dynamic_table_part.hpp	/^  void init_choose_table()$/;"	f	class:dynamic_table_part	access:private	signature:()
+init_choose_table	util.hpp	/^int** init_choose_table(int num_colors)$/;"	f	signature:(int num_colors)
+init_comp_table	dynamic_table_part.hpp	/^  void init_comp_table(unsigned long* part_counts)$/;"	f	class:dynamic_table_part	access:public	signature:(unsigned long* part_counts)
+init_num_colorsets	dynamic_table.hpp	/^  void init_num_colorsets()$/;"	f	class:dynamic_table	access:protected	signature:()
+init_num_colorsets	dynamic_table_part.hpp	/^  void init_num_colorsets()$/;"	f	class:dynamic_table_part	access:private	signature:()
+init_part	dynamic_table_part.hpp	/^  void init_part(Graph* subs, int num_subtemplates, $/;"	f	class:dynamic_table_part	access:public	signature:(Graph* subs, int num_subtemplates, int num_vertices, int num_cols, int Begin_vert, int End_vert, int Rank, int Nprocs)
+init_permutation	util.hpp	/^int* init_permutation(int num_verts)$/;"	f	signature:(int num_verts)
+init_sub	dynamic_table.hpp	/^  virtual void init_sub(int subtemplate){};$/;"	f	class:dynamic_table	access:public	signature:(int subtemplate)
+init_sub	dynamic_table_array.hpp	/^  void init_sub(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+init_sub	dynamic_table_array.hpp	/^  void init_sub(int subtemplate, int active_child, int passive_child)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int active_child, int passive_child)
+init_sub	dynamic_table_part.hpp	/^  int init_sub(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+init_sub	dynamic_table_part.hpp	/^  int init_sub(int s, int a, int p)$/;"	f	class:dynamic_table_part	access:public	signature:(int s, int a, int p)
+init_table_node	colorcount.hpp	/^        void init_table_node(int s)$/;"	f	class:colorcount	access:private	signature:(int s)
+init_table_node	colorcount_part.hpp	/^  void init_table_node(int s)$/;"	f	class:colorcount_part	access:private	signature:(int s)
+is_init	dynamic_table.hpp	/^  virtual bool is_init(void) = 0;$/;"	p	class:dynamic_table	access:public	signature:(void)
+is_init	dynamic_table_array.hpp	/^  bool is_init()$/;"	f	class:dynamic_table_array	access:public	signature:()
+is_inited	dynamic_table.hpp	/^  bool is_inited;$/;"	m	class:dynamic_table	access:protected
+is_sub_init	dynamic_table.hpp	/^  virtual bool is_sub_init(int subtemplate) = 0;$/;"	p	class:dynamic_table	access:public	signature:(int subtemplate)
+is_sub_init	dynamic_table_array.hpp	/^  bool is_sub_init(int subtemplate)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate)
+is_sub_inited	dynamic_table.hpp	/^  bool* is_sub_inited;$/;"	m	class:dynamic_table	access:protected
+is_sub_inited	dynamic_table_part.hpp	/^  bool* is_sub_inited;$/;"	m	class:dynamic_table_part	access:private
+is_vert_inited	dynamic_table_part.hpp	/^  bool* is_vert_inited;$/;"	m	class:dynamic_table_part	access:private
+is_vertex_init_active	dynamic_table_array.hpp	/^  bool is_vertex_init_active(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+is_vertex_init_passive	dynamic_table_array.hpp	/^  bool is_vertex_init_passive(int vertex)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex)
+label_maps	partitioner.hpp	/^  vector<int*> label_maps;$/;"	m	class:partitioner	access:private
+labeled	colorcount.hpp	/^        bool labeled;$/;"	m	class:colorcount	access:private
+labeled	colorcount_part.hpp	/^  bool labeled;$/;"	m	class:colorcount_part	access:private
+labeled	partitioner.hpp	/^  bool labeled;$/;"	m	class:partitioner	access:private
+labels_g	colorcount.hpp	/^        int* labels_g;  $/;"	m	class:colorcount	access:private
+labels_g	colorcount_part.hpp	/^  int* labels_g;  $/;"	m	class:colorcount_part	access:private
+labels_t	colorcount.hpp	/^        int* labels_t;$/;"	m	class:colorcount	access:private
+labels_t	colorcount_part.hpp	/^  int* labels_t;$/;"	m	class:colorcount_part	access:private
+main	fascia-mpi.cpp	/^int main(int argc, char** argv)$/;"	f	signature:(int argc, char** argv)
+max_deg	graph.hpp	/^  int max_deg;$/;"	m	class:Graph	access:private
+max_degree	colorcount.hpp	/^        int max_degree;$/;"	m	class:colorcount	access:private
+max_degree	colorcount_part.hpp	/^  int max_degree;$/;"	m	class:colorcount_part	access:private
+max_degree	graph.hpp	/^  unsigned max_degree() const$/;"	f	class:Graph	access:public	signature:() const
+mem_rss	colorcount_part.hpp	/^  double mem_rss;$/;"	m	class:colorcount_part	access:private
+next_set	util.hpp	/^void next_set(int* current_set, int length, int num_colors)$/;"	f	signature:(int* current_set, int length, int num_colors)
+nprocs	dynamic_table_part.hpp	/^  int nprocs;$/;"	m	class:dynamic_table_part	access:private
+nprocs	fascia-mpi.cpp	/^int rank, nprocs;$/;"	v
+num_colors	colorcount.hpp	/^        int num_colors;$/;"	m	class:colorcount	access:private
+num_colors	colorcount_part.hpp	/^  int num_colors;$/;"	m	class:colorcount_part	access:private
+num_colors	dynamic_table.hpp	/^  int num_colors;$/;"	m	class:dynamic_table	access:protected
+num_colors	dynamic_table_part.hpp	/^  int num_colors;$/;"	m	class:dynamic_table_part	access:private
+num_colorsets	dynamic_table.hpp	/^  int* num_colorsets;$/;"	m	class:dynamic_table	access:protected
+num_colorsets	dynamic_table_part.hpp	/^  int* num_colorsets;$/;"	m	class:dynamic_table_part	access:private
+num_edges	graph.hpp	/^  unsigned num_edges() const$/;"	f	class:Graph	access:public	signature:() const
+num_edgs	graph.hpp	/^  unsigned num_edgs;$/;"	m	class:Graph	access:private
+num_iter	colorcount.hpp	/^        int num_iter;$/;"	m	class:colorcount	access:private
+num_iter	colorcount_part.hpp	/^  int num_iter;$/;"	m	class:colorcount_part	access:private
+num_subs	dynamic_table.hpp	/^  int num_subs;$/;"	m	class:dynamic_table	access:protected
+num_subs	dynamic_table_part.hpp	/^  int num_subs;$/;"	m	class:dynamic_table_part	access:private
+num_vertices	graph.hpp	/^  int num_vertices() const$/;"	f	class:Graph	access:public	signature:() const
+num_verts	dynamic_table.hpp	/^  int num_verts;$/;"	m	class:dynamic_table	access:protected
+num_verts	dynamic_table_part.hpp	/^  int num_verts;$/;"	m	class:dynamic_table_part	access:private
+num_verts	graph.hpp	/^  int num_verts;$/;"	m	class:Graph	access:private
+num_verts	output.hpp	/^  int num_verts;  $/;"	m	class:output	access:public
+num_verts_graph	colorcount.hpp	/^        int num_verts_graph;$/;"	m	class:colorcount	access:private
+num_verts_graph	colorcount_part.hpp	/^  int num_verts_graph;$/;"	m	class:colorcount_part	access:private
+num_verts_part	colorcount_part.hpp	/^  int num_verts_part;$/;"	m	class:colorcount_part	access:private
+num_verts_part	dynamic_table_part.hpp	/^  int num_verts_part;$/;"	m	class:dynamic_table_part	access:private
+num_verts_table	colorcount.hpp	/^        int* num_verts_table;  $/;"	m	class:colorcount	access:private
+num_verts_table	colorcount_part.hpp	/^  int* num_verts_table;  $/;"	m	class:colorcount_part	access:private
+omp_nums	colorcount.hpp	/^        int omp_nums;$/;"	m	class:colorcount	access:private
+omp_nums	colorcount_part.hpp	/^  int omp_nums;$/;"	m	class:colorcount_part	access:private
+operator =	graph.hpp	/^  Graph& operator= (const Graph& param)$/;"	f	class:Graph	access:public	signature:(const Graph& param)
+out_degree	graph.hpp	/^  unsigned out_degree(int v)$/;"	f	class:Graph	access:public	signature:(int v)
+output	output.hpp	/^  output(double* vc, int nv)$/;"	f	class:output	access:public	signature:(double* vc, int nv)
+output	output.hpp	/^  output(double** vc, int num_vert_counts, int nv)$/;"	f	class:output	access:public	signature:(double** vc, int num_vert_counts, int nv)
+output	output.hpp	/^class output{$/;"	c
+output::do_gdd_sort	output.hpp	/^  void do_gdd_sort(vector<pair<double, int> >& gdd)$/;"	f	class:output	access:private	signature:(vector<pair<double, int> >& gdd)
+output::get_count_index	output.hpp	/^  int get_count_index(vector<pair<double, int> >& gdd, double count)$/;"	f	class:output	access:private	signature:(vector<pair<double, int> >& gdd, double count)
+output::num_verts	output.hpp	/^  int num_verts;  $/;"	m	class:output	access:public
+output::output	output.hpp	/^  output(double* vc, int nv)$/;"	f	class:output	access:public	signature:(double* vc, int nv)
+output::output	output.hpp	/^  output(double** vc, int num_vert_counts, int nv)$/;"	f	class:output	access:public	signature:(double** vc, int num_vert_counts, int nv)
+output::output_gdd	output.hpp	/^  void output_gdd(char* output_filename)$/;"	f	class:output	access:public	signature:(char* output_filename)
+output::output_verts	output.hpp	/^  void output_verts(char* output_filename)$/;"	f	class:output	access:public	signature:(char* output_filename)
+output::vert_counts	output.hpp	/^  double* vert_counts;$/;"	m	class:output	access:public
+output::write_gdd	output.hpp	/^  void write_gdd(char* output_filename, vector<pair<double, int> > gdd)$/;"	f	class:output	access:public	signature:(char* output_filename, vector<pair<double, int> > gdd)
+output::~output	output.hpp	/^  ~output()$/;"	f	class:output	access:public	signature:()
+output_gdd	output.hpp	/^  void output_gdd(char* output_filename)$/;"	f	class:output	access:public	signature:(char* output_filename)
+output_verts	output.hpp	/^  void output_verts(char* output_filename)$/;"	f	class:output	access:public	signature:(char* output_filename)
+p	xs1024star.hpp	/^  long p;$/;"	m	struct:xs1024star_t	access:public
+parents	partitioner.hpp	/^  vector<int> parents;$/;"	m	class:partitioner	access:private
+part	colorcount.hpp	/^        partitioner part;$/;"	m	class:colorcount	access:private
+part	colorcount_part.hpp	/^  partitioner part;$/;"	m	class:colorcount_part	access:private
+part_offsets	colorcount_part.hpp	/^  int* part_offsets;$/;"	m	class:colorcount_part	access:private
+partition_recursive	partitioner.hpp	/^  void partition_recursive(int s, int root)$/;"	f	class:partitioner	access:private	signature:(int s, int root)
+partitioner	partitioner.hpp	/^  partitioner()  {}  $/;"	f	class:partitioner	access:public	signature:()
+partitioner	partitioner.hpp	/^  partitioner(Graph& t, bool label, int* label_map)$/;"	f	class:partitioner	access:public	signature:(Graph& t, bool label, int* label_map)
+partitioner	partitioner.hpp	/^class partitioner$/;"	c
+partitioner::active_children	partitioner.hpp	/^  vector<int> active_children;$/;"	m	class:partitioner	access:private
+partitioner::check_nums	partitioner.hpp	/^  void check_nums(int root, vector<int>& srcs, vector<int>& dsts, $/;"	f	class:partitioner	access:private	signature:(int root, vector<int>& srcs, vector<int>& dsts, int* labels, int* labels_sub)
+partitioner::clear_temparrays	partitioner.hpp	/^  void clear_temparrays()$/;"	f	class:partitioner	access:public	signature:()
+partitioner::count_needed	partitioner.hpp	/^  bool* count_needed;$/;"	m	class:partitioner	access:private
+partitioner::current_creation_index	partitioner.hpp	/^  int current_creation_index;$/;"	m	class:partitioner	access:private
+partitioner::cut_edge_labels	partitioner.hpp	/^  vector<int> cut_edge_labels;$/;"	m	class:partitioner	access:private
+partitioner::fin_arrays	partitioner.hpp	/^  void fin_arrays()$/;"	f	class:partitioner	access:private	signature:()
+partitioner::get_active_index	partitioner.hpp	/^  int get_active_index(int a)$/;"	f	class:partitioner	access:public	signature:(int a)
+partitioner::get_labels	partitioner.hpp	/^  int* get_labels(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+partitioner::get_num_verts_active	partitioner.hpp	/^  int get_num_verts_active(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+partitioner::get_num_verts_passive	partitioner.hpp	/^  int get_num_verts_passive(int s)$/;"	f	class:partitioner	access:public	signature:(int s)
+partitioner::get_passive_index	partitioner.hpp	/^  int get_passive_index(int p)$/;"	f	class:partitioner	access:public	signature:(int p)
+partitioner::get_subtemplate_count	partitioner.hpp	/^  int get_subtemplate_count() { return subtemplate_count; }$/;"	f	class:partitioner	access:public	signature:()
+partitioner::get_subtemplates	partitioner.hpp	/^  Graph* get_subtemplates() { return subtemplates; }$/;"	f	class:partitioner	access:public	signature:()
+partitioner::init_arrays	partitioner.hpp	/^  void init_arrays()$/;"	f	class:partitioner	access:private	signature:()
+partitioner::label_maps	partitioner.hpp	/^  vector<int*> label_maps;$/;"	m	class:partitioner	access:private
+partitioner::labeled	partitioner.hpp	/^  bool labeled;$/;"	m	class:partitioner	access:private
+partitioner::parents	partitioner.hpp	/^  vector<int> parents;$/;"	m	class:partitioner	access:private
+partitioner::partition_recursive	partitioner.hpp	/^  void partition_recursive(int s, int root)$/;"	f	class:partitioner	access:private	signature:(int s, int root)
+partitioner::partitioner	partitioner.hpp	/^  partitioner()  {}  $/;"	f	class:partitioner	access:public	signature:()
+partitioner::partitioner	partitioner.hpp	/^  partitioner(Graph& t, bool label, int* label_map)$/;"	f	class:partitioner	access:public	signature:(Graph& t, bool label, int* label_map)
+partitioner::passive_children	partitioner.hpp	/^  vector<int> passive_children;$/;"	m	class:partitioner	access:private
+partitioner::remove_extra_subtemplates	partitioner.hpp	/^  void remove_extra_subtemplates()$/;"	f	class:partitioner	access:public	signature:()
+partitioner::set_active_child	partitioner.hpp	/^  void set_active_child(int s, int a)$/;"	f	class:partitioner	access:private	signature:(int s, int a)
+partitioner::set_parent	partitioner.hpp	/^  void set_parent(int c, int p)$/;"	f	class:partitioner	access:private	signature:(int c, int p)
+partitioner::set_passive_child	partitioner.hpp	/^  void set_passive_child(int s, int p)$/;"	f	class:partitioner	access:private	signature:(int s, int p)
+partitioner::sort_subtemplates	partitioner.hpp	/^  void sort_subtemplates()$/;"	f	class:partitioner	access:public	signature:()
+partitioner::split	partitioner.hpp	/^  int* split(int& s, int& root)$/;"	f	class:partitioner	access:private	signature:(int& s, int& root)
+partitioner::split_sub	partitioner.hpp	/^  int split_sub(int& s, int& root, int& other_root)$/;"	f	class:partitioner	access:private	signature:(int& s, int& root, int& other_root)
+partitioner::sub_count_needed	partitioner.hpp	/^  int sub_count_needed(int s) { return count_needed[s]; }  $/;"	f	class:partitioner	access:public	signature:(int s)
+partitioner::subtemplate	partitioner.hpp	/^  Graph subtemplate;$/;"	m	class:partitioner	access:private
+partitioner::subtemplate_count	partitioner.hpp	/^  int subtemplate_count;$/;"	m	class:partitioner	access:private
+partitioner::subtemplates	partitioner.hpp	/^  Graph* subtemplates;$/;"	m	class:partitioner	access:private
+partitioner::subtemplates_create	partitioner.hpp	/^  Graph* subtemplates_create;$/;"	m	class:partitioner	access:private
+partitioner::~partitioner	partitioner.hpp	/^  ~partitioner()$/;"	f	class:partitioner	access:public	signature:()
+passive_children	partitioner.hpp	/^  vector<int> passive_children;$/;"	m	class:partitioner	access:private
+peak_comm_mem	colorcount_part.hpp	/^  double peak_comm_mem;$/;"	m	class:colorcount_part	access:private
+peak_mem	colorcount_part.hpp	/^  double peak_mem;$/;"	m	class:colorcount_part	access:private
+print_info	fascia-mpi.cpp	/^void print_info(char* name)$/;"	f	signature:(char* name)
+print_info_short	fascia-mpi.cpp	/^void print_info_short(char* name)$/;"	f	signature:(char* name)
+print_my_graph	util.hpp	/^void print_my_graph(Graph& g)$/;"	f	signature:(Graph& g)
+print_table	dynamic_table_part.hpp	/^  void print_table(int outnum)$/;"	f	class:dynamic_table_part	access:public	signature:(int outnum)
+process_mem_usage	colorcount_part.hpp	/^void process_mem_usage(double& resident_set)$/;"	f	signature:(double& resident_set)
+quicksort_inc	util.hpp	/^void quicksort_inc(int* arr1, int left, int right) $/;"	f	signature:(int* arr1, int left, int right)
+rank	dynamic_table_part.hpp	/^  int rank;$/;"	m	class:dynamic_table_part	access:private
+rank	fascia-mpi.cpp	/^int rank, nprocs;$/;"	v
+read_count	colorcount.hpp	/^        int read_count;$/;"	m	class:colorcount	access:private
+read_count	colorcount_part.hpp	/^  unsigned long read_count;$/;"	m	class:colorcount_part	access:private
+read_in_graph	fascia-mpi.cpp	/^void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g)$/;"	f	signature:(Graph& g, char* graph_file, bool labeled, int*& labels_g)
+read_in_graph	fascia-mpi.cpp	/^void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g,$/;"	f	signature:(Graph& g, char* graph_file, bool labeled, int*& labels_g, int*& part_offsets)
+remove_extra_subtemplates	partitioner.hpp	/^  void remove_extra_subtemplates()$/;"	f	class:partitioner	access:public	signature:()
+run_batch	fascia-mpi.cpp	/^void run_batch(char* graph_file, char* batch_file, bool labeled,$/;"	f	signature:(char* graph_file, char* batch_file, bool labeled, bool do_vert, bool do_gdd, int iterations, bool do_outerloop, bool calc_auto, int omp_thds)
+run_dist	fascia-mpi.cpp	/^void run_dist(char* graph_file, char* template_file, bool labeled,$/;"	f	signature:(char* graph_file, char* template_file, bool labeled, bool do_vert, bool do_gdd, int iterations, bool calc_auto, int omp_thds, int alltoall)
+run_motif	fascia-mpi.cpp	/^void run_motif(char* graph_file, int motif, $/;"	f	signature:(char* graph_file, int motif, bool do_vert, bool do_gdd, int iterations, bool do_outerloop, bool calc_auto, int omp_thds)
+run_single	fascia-mpi.cpp	/^void run_single(char* graph_file, char* template_file, bool labeled,$/;"	f	signature:(char* graph_file, char* template_file, bool labeled, bool do_vert, bool do_gdd, int iterations, bool do_outerloop, bool calc_auto, int omp_thds)
+running_offset	dynamic_table_part.hpp	/^  unsigned long running_offset;$/;"	m	class:dynamic_table_part	access:private
+s	xs1024star.hpp	/^  unsigned long s[16];$/;"	m	struct:xs1024star_t	access:public
+set	dynamic_table_array.hpp	/^  void set(int subtemplate, int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_array	access:public	signature:(int subtemplate, int vertex, int comb_num_index, float count)
+set	dynamic_table_array.hpp	/^  void set(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_array	access:public	signature:(int vertex, int comb_num_index, float count)
+set	dynamic_table_part.hpp	/^  void set(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_part	access:public	signature:(int vertex, int comb_num_index, float count)
+set_active_child	partitioner.hpp	/^  void set_active_child(int s, int a)$/;"	f	class:partitioner	access:private	signature:(int s, int a)
+set_count	colorcount.hpp	/^        int set_count;$/;"	m	class:colorcount	access:private
+set_count	colorcount_part.hpp	/^  unsigned long set_count;$/;"	m	class:colorcount_part	access:private
+set_node	dynamic_table_part.hpp	/^  void set_node(int vertex, int comb_num_index, float count)$/;"	f	class:dynamic_table_part	access:public	signature:(int vertex, int comb_num_index, float count)
+set_parent	partitioner.hpp	/^  void set_parent(int c, int p)$/;"	f	class:partitioner	access:private	signature:(int c, int p)
+set_passive_child	partitioner.hpp	/^  void set_passive_child(int s, int p)$/;"	f	class:partitioner	access:private	signature:(int s, int p)
+set_sub_to_table_node	dynamic_table_part.hpp	/^  void set_sub_to_table_node(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+set_table_node	dynamic_table_part.hpp	/^  void set_table_node(int s)$/;"	f	class:dynamic_table_part	access:public	signature:(int s)
+set_total_counts	dynamic_table_part.hpp	/^  void set_total_counts(int total_count)$/;"	f	class:dynamic_table_part	access:public	signature:(int total_count)
+sizes_verts	colorcount_part.hpp	/^  int* sizes_verts;$/;"	m	class:colorcount_part	access:private
+sort	util.hpp	/^void sort(double* arr, int size)$/;"	f	signature:(double* arr, int size)
+sort	util.hpp	/^void sort(int* arr, int size)$/;"	f	signature:(int* arr, int size)
+sort	util.hpp	/^void sort(vector<int>& arr)$/;"	f	signature:(vector<int>& arr)
+sort_subtemplates	partitioner.hpp	/^  void sort_subtemplates()$/;"	f	class:partitioner	access:public	signature:()
+split	partitioner.hpp	/^  int* split(int& s, int& root)$/;"	f	class:partitioner	access:private	signature:(int& s, int& root)
+split_sub	partitioner.hpp	/^  int split_sub(int& s, int& root, int& other_root)$/;"	f	class:partitioner	access:private	signature:(int& s, int& root, int& other_root)
+sub_count_needed	partitioner.hpp	/^  int sub_count_needed(int s) { return count_needed[s]; }  $/;"	f	class:partitioner	access:public	signature:(int s)
+sub_sizes	dynamic_table_part.hpp	/^  unsigned long* sub_sizes;$/;"	m	class:dynamic_table_part	access:private
+sub_sizes_part	dynamic_table_part.hpp	/^  unsigned long* sub_sizes_part;$/;"	m	class:dynamic_table_part	access:private
+subtemplate	partitioner.hpp	/^  Graph subtemplate;$/;"	m	class:partitioner	access:private
+subtemplate_count	colorcount.hpp	/^        int subtemplate_count;$/;"	m	class:colorcount	access:private
+subtemplate_count	colorcount_part.hpp	/^  int subtemplate_count;$/;"	m	class:colorcount_part	access:private
+subtemplate_count	partitioner.hpp	/^  int subtemplate_count;$/;"	m	class:partitioner	access:private
+subtemplates	colorcount.hpp	/^        Graph* subtemplates;$/;"	m	class:colorcount	access:private
+subtemplates	colorcount_part.hpp	/^  Graph* subtemplates;$/;"	m	class:colorcount_part	access:private
+subtemplates	dynamic_table.hpp	/^  Graph* subtemplates;$/;"	m	class:dynamic_table	access:protected
+subtemplates	dynamic_table_part.hpp	/^  Graph* subtemplates;$/;"	m	class:dynamic_table_part	access:private
+subtemplates	partitioner.hpp	/^  Graph* subtemplates;$/;"	m	class:partitioner	access:private
+subtemplates_create	partitioner.hpp	/^  Graph* subtemplates_create;$/;"	m	class:partitioner	access:private
+t	colorcount.hpp	/^        Graph* t;  \/\/ template$/;"	m	class:colorcount	access:private
+t	colorcount_part.hpp	/^  Graph* t;$/;"	m	class:colorcount_part	access:private
+table	dynamic_table_array.hpp	/^  float*** table; $/;"	m	class:dynamic_table_array	access:private
+table	dynamic_table_part.hpp	/^  float** table;$/;"	m	class:dynamic_table_part	access:private
+table_counts_a	dynamic_table_part.hpp	/^  float* table_counts_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+table_counts_p	dynamic_table_part.hpp	/^  float* table_counts_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+table_node	dynamic_table_part.hpp	/^  int table_node;$/;"	m	class:dynamic_table_part	access:private
+table_size_a	dynamic_table_part.hpp	/^  int table_size_a(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+table_size_p	dynamic_table_part.hpp	/^  int table_size_p(int v)$/;"	f	class:dynamic_table_part	access:public	signature:(int v)
+temp_colorsets	dynamic_table_part.hpp	/^  short* temp_colorsets;$/;"	m	class:dynamic_table_part	access:private
+temp_table	dynamic_table_part.hpp	/^  float* temp_table;$/;"	m	class:dynamic_table_part	access:private
+temp_vert_offsets	dynamic_table_part.hpp	/^  long unsigned* temp_vert_offsets;$/;"	m	class:dynamic_table_part	access:private
+template_count	colorcount.hpp	/^        double template_count()$/;"	f	class:colorcount	access:private	signature:()
+template_count	colorcount_part.hpp	/^  double template_count()$/;"	f	class:colorcount_part	access:private	signature:()
+test_automorphism	util.hpp	/^int test_automorphism(Graph& t, vector<int>& mapping)$/;"	f	signature:(Graph& t, vector<int>& mapping)
+test_isomorphism	util.hpp	/^bool test_isomorphism(Graph& t, Graph& h, vector<int>& mapping)$/;"	f	signature:(Graph& t, Graph& h, vector<int>& mapping)
+timer	util.hpp	/^double timer() {$/;"	f	signature:()
+timing	fascia-mpi.cpp	/^bool timing = false;$/;"	v
+total_count	colorcount.hpp	/^        int total_count;$/;"	m	class:colorcount	access:private
+total_count	colorcount_part.hpp	/^  unsigned long total_count;$/;"	m	class:colorcount_part	access:private
+total_recv	colorcount_part.hpp	/^  unsigned long* total_recv;$/;"	m	class:colorcount_part	access:private
+total_send	colorcount_part.hpp	/^  unsigned long* total_send;$/;"	m	class:colorcount_part	access:private
+transfer_size_sum	colorcount_part.hpp	/^  double transfer_size_sum;$/;"	m	class:colorcount_part	access:private
+transfer_size_sum_prev	colorcount_part.hpp	/^  double transfer_size_sum_prev;$/;"	m	class:colorcount_part	access:private
+useAlltoAll	colorcount_part.hpp	/^  int useAlltoAll;$/;"	m	class:colorcount_part	access:private
+verbose	fascia-mpi.cpp	/^bool verbose, debug;$/;"	v
+vert_counts	output.hpp	/^  double* vert_counts;$/;"	m	class:output	access:public
+vert_offsets	colorcount_part.hpp	/^  int* vert_offsets;$/;"	m	class:colorcount_part	access:private
+vert_offsets	dynamic_table_part.hpp	/^  unsigned long** vert_offsets;$/;"	m	class:dynamic_table_part	access:private
+write_gdd	output.hpp	/^  void write_gdd(char* output_filename, vector<pair<double, int> > gdd)$/;"	f	class:output	access:public	signature:(char* output_filename, vector<pair<double, int> > gdd)
+xs1024star_next	xs1024star.hpp	/^unsigned long xs1024star_next(xs1024star_t* xs) $/;"	f	signature:(xs1024star_t* xs)
+xs1024star_next_real	xs1024star.hpp	/^double xs1024star_next_real(xs1024star_t* xs) $/;"	f	signature:(xs1024star_t* xs)
+xs1024star_seed	xs1024star.hpp	/^void xs1024star_seed(unsigned long seed, xs1024star_t* xs) $/;"	f	signature:(unsigned long seed, xs1024star_t* xs)
+xs1024star_t	xs1024star.hpp	/^struct xs1024star_t {$/;"	s
+xs1024star_t::p	xs1024star.hpp	/^  long p;$/;"	m	struct:xs1024star_t	access:public
+xs1024star_t::s	xs1024star.hpp	/^  unsigned long s[16];$/;"	m	struct:xs1024star_t	access:public
+~Graph	graph.hpp	/^  ~Graph() {};$/;"	f	class:Graph	access:public	signature:()
+~colorcount	colorcount.hpp	/^        ~colorcount()$/;"	f	class:colorcount	access:public	signature:()
+~colorcount_part	colorcount_part.hpp	/^  ~colorcount_part()$/;"	f	class:colorcount_part	access:public	signature:()
+~dynamic_table	dynamic_table.hpp	/^  ~dynamic_table()$/;"	f	class:dynamic_table	access:public	signature:()
+~output	output.hpp	/^  ~output()$/;"	f	class:output	access:public	signature:()
+~partitioner	partitioner.hpp	/^  ~partitioner()$/;"	f	class:partitioner	access:public	signature:()
