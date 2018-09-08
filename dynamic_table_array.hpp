@@ -75,7 +75,7 @@ public:
   {
     for (int v = 0; v < num_verts; ++v) {
       if (table[subtemplate][v])
-        free(table[subtemplate][v]);
+        _mm_free(table[subtemplate][v]);
     }
 
     if (is_sub_inited[subtemplate]) {    
@@ -94,7 +94,7 @@ public:
       {
         for (int v = 0; v < num_verts; v++) {
           if (table[s][v])
-            free(table[s][v]);
+            _mm_free(table[s][v]);
         }
 
         free(table[s]);
@@ -155,8 +155,7 @@ public:
   {
     if (table[subtemplate][vertex] == NULL)  
     {
-      table[subtemplate][vertex] = 
-                (float*)malloc(num_colorsets[subtemplate] * sizeof(float));
+      table[subtemplate][vertex] =  (float*)_mm_malloc(num_colorsets[subtemplate] * sizeof(float), 64);
       assert(cur_table[vertex] != NULL);
       for (int c = 0; c < num_colorsets[subtemplate]; ++c) {      
         table[subtemplate][vertex][c] = 0.0;
@@ -170,8 +169,9 @@ public:
   {
     if (cur_table[vertex] == NULL)  
     {
-      cur_table[vertex] = 
-                (float*)malloc(num_colorsets[cur_sub] * sizeof(float));
+      // cur_table[vertex] = (float*)malloc(num_colorsets[cur_sub] * sizeof(float));
+      cur_table[vertex] = (float*)_mm_malloc(num_colorsets[cur_sub] * sizeof(float), 64);
+
       assert(cur_table[vertex] != NULL);
       for (int c = 0; c < num_colorsets[cur_sub]; ++c) {      
         cur_table[vertex][c] = 0.0;

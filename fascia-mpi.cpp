@@ -323,7 +323,7 @@ void read_in_graph(Graph& g, char* graph_file, bool labeled, int*& labels_g,
 
 void run_dist(char* graph_file, char* template_file, bool labeled,
   bool do_vert, bool do_gdd, int iterations, bool calc_auto, int omp_thds, int alltoall)
-{
+{/*{{{*/
   Graph g;
   Graph t;
   int* labels_g = NULL;
@@ -398,13 +398,14 @@ if (timing || verbose) {
   
   if (labels_g != NULL) delete [] labels_g;
   if (labels_g != NULL) delete [] labels_t;
-}
+}/*}}}*/
 
 void run_single(char* graph_file, char* template_file, bool labeled,
                 bool do_vert, bool do_gdd,
                 int iterations, 
                 bool do_outerloop, bool calc_auto, int omp_thds)
-{
+{/*{{{*/
+
   Graph g;
   Graph t;
   int* labels_g = NULL;
@@ -550,14 +551,14 @@ if (timing || verbose) {
 
   if (labels_g != NULL) delete [] labels_g;
   if (labels_g != NULL) delete [] labels_t;
-}
+}/*}}}*/
 
 
 void run_batch(char* graph_file, char* batch_file, bool labeled,
                     bool do_vert, bool do_gdd,
                     int iterations, 
                     bool do_outerloop, bool calc_auto, int omp_thds)
-{
+{/*{{{*/
   Graph g;
   Graph t;
   int* labels_g = NULL;
@@ -709,14 +710,14 @@ if (timing || verbose) {
 }
 
   delete [] labels_g;
-}
+}/*}}}*/
 
 
 void run_motif(char* graph_file, int motif, 
                 bool do_vert, bool do_gdd, 
                 int iterations, 
                 bool do_outerloop, bool calc_auto, int omp_thds)
-{
+{/*{{{*/
   char* motif_batchfile = NULL;
 
   switch(motif)
@@ -736,7 +737,7 @@ void run_motif(char* graph_file, int motif,
             do_vert, do_gdd,
             iterations, 
             do_outerloop, calc_auto, omp_thds);
-}
+}/*}}}*/
 
 
 int main(int argc, char** argv)
@@ -759,7 +760,7 @@ int main(int argc, char** argv)
   char* batch_file = NULL;
   int iterations = 1;
   bool do_outerloop = false;
-  bool calculate_automorphism = true;
+  bool calculate_automorphism = false;
   bool labeled = false;
   bool do_gdd = false;
   bool do_vert = false;

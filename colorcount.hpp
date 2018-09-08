@@ -501,54 +501,60 @@ class colorcount{
                         if (valid_nbrs_count)
                         {
                             // allocate a temp array to hold all of the counting value
-                            double* update_count_array = new double[num_combinations_verts_sub];
-                            std::memset(update_count_array, 0, num_combinations_verts_sub*sizeof(double));
+                            int vec_loop_len = num_combinations_verts_sub*num_combinations;
+                            // double* update_count_array = new double[vec_loop_len];
+                            double* update_count_array = (double*)_mm_malloc(vec_loop_len*sizeof(double), 64);
+
+                            std::memset(update_count_array, 0, vec_loop_len*sizeof(double));
+
+                            int* comb_indexes_a_vec = comb_num_indexes_vec[0][s];
+                            int* comb_indexes_p_vec = comb_num_indexes_vec[1][s];
 
                             // outmost loop over valid nbrs
                             for (int i = 0; i < valid_nbrs_count; ++i) 
                             {
-
-                                // int valid_nbrs_id = valid_nbrs[i];
+                                // get counts_a and counts_p
                                 float* counts_p = dt.get_passive(valid_nbrs[i]);
 
-                                // a second loop over color set combs
-                                for (int n = 0; n < num_combinations_verts_sub; ++n)
+                                __assume_aligned(update_count_array, 64);
+                                __assume_aligned(comb_indexes_a_vec, 64);
+                                __assume_aligned(comb_indexes_p_vec, 64);
+                                __assume_aligned(counts_a, 64);
+                                __assume_aligned(counts_p, 64);
+
+                                #pragma vector always
+                                for(int j=0;j<vec_loop_len;j++)
                                 {
-                                    // double color_count = 0.0;                
-                                    int* comb_indexes_a = comb_num_indexes[0][s][n];
-                                    int* comb_indexes_p = comb_num_indexes[1][s][n];
-                                    int p = num_combinations - 1;
-                                    for (int a = 0; a < num_combinations; ++a, --p) 
-                                    {
-                                        float count_a = counts_a[comb_indexes_a[a]];
-                                        if (count_a) 
-                                        {
-                                            update_count_array[n] += ((double)count_a)*counts_p[comb_indexes_p[p]];
-#if COLLECT_DATA                  
-                                            ++read_count_loop;
-#endif                  
-                                        }
+                                    update_count_array[j] += (double)(counts_a[comb_indexes_a_vec[j]])*(double)(counts_p[comb_indexes_p_vec[j]]);
+                                }
 
-                                    } // end of a_p inner comb looping
-
-                                } // end of color_comb looping
 
                             } // end of nbr looping
 
+                            // sum up the counts
                             for (int n = 0; n < num_combinations_verts_sub; ++n)
                             {
-                                if (update_count_array[n] > 0.0)
+                                for (int j=1;j<num_combinations;j++)
+                                    update_count_array[n*num_combinations] += update_count_array[n*num_combinations+j];
+                            }
+
+                            // update the counts
+                            for (int n = 0; n < num_combinations_verts_sub; ++n)
+                            {
+
+                                double res = update_count_array[n*num_combinations];
+                                if ( res > 0.0)
                                 {
 #if COLLECT_DATA
                                     ++set_count_loop;
 #endif              
 
                                     if (s != 0)
-                                        dt.set(v, comb_num_indexes_set[s][n], (float)update_count_array[n]);
+                                        dt.set(v, comb_num_indexes_set[s][n], (float)res);
                                     else if (do_graphlet_freq || do_vert_output)
-                                        final_vert_counts[v] += (double)update_count_array[n];
+                                        final_vert_counts[v] += res;
 
-                                    cc += update_count_array[n];
+                                    cc += res;
 
                                 }
 #if COLLECT_DATA            
@@ -557,7 +563,8 @@ class colorcount{
                             }
 
                             // free mem space
-                            delete[] update_count_array;
+                            // delete[] update_count_array;
+                            _mm_free(update_count_array);
 
                         } // end of counting
 
@@ -749,8 +756,14 @@ class colorcount{
         {/*{{{*/
 
             comb_num_indexes = new int***[2];
+            comb_num_indexes_vec = new int**[2];
+
             comb_num_indexes[0] = new int**[subtemplate_count];
+            comb_num_indexes_vec[0] = new int*[subtemplate_count];
+
             comb_num_indexes[1] = new int**[subtemplate_count];    
+            comb_num_indexes_vec[1] = new int*[subtemplate_count];
+
             comb_num_indexes_set = new int*[subtemplate_count];
 
             for (int s = 0; s < subtemplate_count; ++s)
@@ -763,9 +776,28 @@ class colorcount{
                     comb_num_indexes[0][s] = new int*[num_combinations_s];
                     comb_num_indexes[1][s] = new int*[num_combinations_s];
                 }
+
                 comb_num_indexes_set[s] = new int[num_combinations_s];
                 int* colorset_set = init_permutation(num_verts_sub);
 
+                int num_verts_a = 0; 
+                int num_verts_p = 0; 
+                // int num_combinations_a = choose(num_verts_sub, num_verts_a);
+                if (num_verts_sub > 1)
+                {
+                    num_verts_a = part.get_num_verts_active(s);
+                    num_verts_p = part.get_num_verts_passive(s);          
+
+                    // comb_num_indexes_vec[0][s] = new int[choose(num_verts_sub, num_verts_a)*num_combinations_s];
+                    // comb_num_indexes_vec[1][s] = new int[choose(num_verts_sub, num_verts_a)*num_combinations_s];
+
+                    comb_num_indexes_vec[0][s] = (int*)_mm_malloc(choose(num_verts_sub, num_verts_a)*num_combinations_s*sizeof(int), 64);
+                    comb_num_indexes_vec[1][s] = (int*)_mm_malloc(choose(num_verts_sub, num_verts_a)*num_combinations_s*sizeof(int), 64);
+
+                }
+                
+                
+                
                 for (int n = 0; n < num_combinations_s; ++n)
                 {      
                     // comb_num_indexes_set[s][n] are different for different n values 
@@ -773,8 +805,9 @@ class colorcount{
 
                     if (num_verts_sub > 1)
                     {  
-                        int num_verts_a = part.get_num_verts_active(s);
-                        int num_verts_p = part.get_num_verts_passive(s);          
+                        // int num_verts_a = part.get_num_verts_active(s);
+                        // int num_verts_p = part.get_num_verts_passive(s);          
+                        //
                         // int active_index = part.get_active_index(s);
                         // int passive_index = part.get_passive_index(s);
 
@@ -803,6 +836,10 @@ class colorcount{
 
                             comb_num_indexes[0][s][n][a] = color_index_a;
                             comb_num_indexes[1][s][n][p] = color_index_p;
+
+                            // add to vec data structure
+                            comb_num_indexes_vec[0][s][n*num_combinations_a + a] = color_index_a;
+                            comb_num_indexes_vec[1][s][n*num_combinations_a + p] = color_index_p;
                         }
                     }        
 
@@ -817,6 +854,7 @@ class colorcount{
 
         void delete_comb_num_system_indexes()
         {/*{{{*/
+
             for (int s = 0; s < subtemplate_count; ++s)
             {
                 int num_verts_sub = subtemplates[s].num_vertices();      
@@ -835,6 +873,12 @@ class colorcount{
                 {  
                     delete [] comb_num_indexes[0][s];
                     delete [] comb_num_indexes[1][s];
+
+                    // delete vec data structure
+                    // delete [] comb_num_indexes_vec[0][s];
+                    // delete [] comb_num_indexes_vec[1][s];
+                    _mm_free(comb_num_indexes_vec[0][s]);
+                    _mm_free(comb_num_indexes_vec[1][s]);
                 }
 
                 delete [] comb_num_indexes_set[s];
@@ -842,8 +886,18 @@ class colorcount{
 
             delete [] comb_num_indexes[0];
             delete [] comb_num_indexes[1];
+
+            // delete vec data structure
+            delete [] comb_num_indexes_vec[0];
+            delete [] comb_num_indexes_vec[1];
+
             delete [] comb_num_indexes; 
+
+            // delete vec data structure
+            delete [] comb_num_indexes_vec; 
+
             delete [] comb_num_indexes_set;
+
         }/*}}}*/
 
 
@@ -869,6 +923,7 @@ class colorcount{
         int**** index_sets;
         int***** color_sets;
         int**** comb_num_indexes;
+        int*** comb_num_indexes_vec;
         int** comb_num_indexes_set;
         int* num_verts_table;  
         int num_verts_graph;
