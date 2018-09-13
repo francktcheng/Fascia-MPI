@@ -502,7 +502,6 @@ class colorcount{
                         {
                             // allocate a temp array to hold all of the counting value
                             int vec_loop_len = num_combinations_verts_sub*num_combinations;
-                            // double* update_count_array = new double[vec_loop_len];
                             double* update_count_array = (double*)_mm_malloc(vec_loop_len*sizeof(double), 64);
 
                             std::memset(update_count_array, 0, vec_loop_len*sizeof(double));
@@ -516,6 +515,7 @@ class colorcount{
                                 // get counts_a and counts_p
                                 float* counts_p = dt.get_passive(valid_nbrs[i]);
 
+                                // make sure the data is aligned by 64 bytes
                                 __assume_aligned(update_count_array, 64);
                                 __assume_aligned(comb_indexes_a_vec, 64);
                                 __assume_aligned(comb_indexes_p_vec, 64);
@@ -525,17 +525,17 @@ class colorcount{
                                 #pragma vector always
                                 for(int j=0;j<vec_loop_len;j++)
                                 {
-                                    update_count_array[j] += (double)(counts_a[comb_indexes_a_vec[j]])*(double)(counts_p[comb_indexes_p_vec[j]]);
+                                    update_count_array[j] += (double)(counts_a[comb_indexes_a_vec[j]])*(counts_p[comb_indexes_p_vec[j]]);
                                 }
 
 
                             } // end of nbr looping
 
                             // sum up the counts
-                            for (int n = 0; n < num_combinations_verts_sub; ++n)
+                            for (int n = 0; n < vec_loop_len; n+=num_combinations)
                             {
                                 for (int j=1;j<num_combinations;j++)
-                                    update_count_array[n*num_combinations] += update_count_array[n*num_combinations+j];
+                                    update_count_array[n] += update_count_array[n+j];
                             }
 
                             // update the counts
@@ -550,7 +550,7 @@ class colorcount{
 #endif              
 
                                     if (s != 0)
-                                        dt.set(v, comb_num_indexes_set[s][n], (float)res);
+                                        dt.set(v, comb_num_indexes_set[s][n], (double)res);
                                     else if (do_graphlet_freq || do_vert_output)
                                         final_vert_counts[v] += res;
 

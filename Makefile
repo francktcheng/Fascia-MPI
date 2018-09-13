@@ -7,7 +7,6 @@
 # CXXFLAGS=-Wall -fopenmp -O3
 
 ### use intelmpi and skylake AVX512
-# CXXFLAGS=-Wall -qopenmp -O3 -xCORE-AVX512 -qopt-report=5 -fp-model fast=2 
 CXXFLAGS=-Wall -qopenmp -O3 -xCORE-AVX512 -qopt-report=5
 # CXXFLAGS=-Wall -qopenmp -O3
 
