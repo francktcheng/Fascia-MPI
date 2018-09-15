@@ -218,8 +218,8 @@ class colorcount{
 
                     }
 
-                    colorful_count(s);
-                    // colorful_count_innerU(s);
+                    // colorful_count(s);
+                    colorful_count_innerU(s);
                     if (verbose && rank == 0) {  
                         elt = timer() - elt;
                         fprintf(stderr, "s %d, array time %9.6lf s.\n", s, elt);
@@ -262,8 +262,8 @@ class colorcount{
             if (verbose) {  
                 elt = timer();
             }
-            full_count = colorful_count(0);
-            // full_count = colorful_count_innerU(0);
+            // full_count = colorful_count(0);
+            full_count = colorful_count_innerU(0);
             if (verbose && rank == 0) {  
                 elt = timer() - elt;
                 fprintf(stderr, "s %d, array time %9.6lf s.\n", 0, elt);
@@ -462,7 +462,6 @@ class colorcount{
 
             int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
             int vec_loop_len = num_combinations_verts_sub*num_combinations;
-            // double* update_count_array = (double*)_mm_malloc(vec_loop_len*omp_nums*sizeof(double), 64);
 
             printf("count sub %d, lenComb: %d, lenAComb: %d, lenVec: %d\n", s, num_combinations_verts_sub, 
                     num_combinations, vec_loop_len);
@@ -488,13 +487,6 @@ class colorcount{
                         int* adjs = g->adjacent_vertices(v);
                         int end = g->out_degree(v);
 
-                        // int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
-
-                        //TODO: get the active s value and passive s value
-                        // fetch the new index data array for active  
-                        // fetch the new index data array for passive
-                        // length == num_combinations_verts_sub*num_combinations
-
                         // obtain the active data
                         float* counts_a = dt.get_active(v);  
 #if COLLECT_DATA
@@ -513,7 +505,6 @@ class colorcount{
                         {
                             // allocate a temp array to hold all of the counting value
                             double* update_count_array = (double*)_mm_malloc(vec_loop_len*sizeof(double), 64);
-
                             std::memset(update_count_array, 0, vec_loop_len*sizeof(double));
 
                             int* comb_indexes_a_vec = comb_num_indexes_vec[0][s];
@@ -547,14 +538,12 @@ class colorcount{
                             {
                                 for (int j=1;j<num_combinations;j++)
                                     update_count_array[n] += update_count_array[n+j];
-                                    // update_count_array_tls[n] += update_count_array[n+j];
                             }
 
                             // update the counts
                             for (int n = 0; n < num_combinations_verts_sub; ++n)
                             {
                                 double res = update_count_array[n*num_combinations];
-                                // double res = update_count_array_tls[n*num_combinations];
                                 if (res > 0)
                                 {
                                     dt.set(v, comb_num_indexes_set[s][n], (double)res);
@@ -584,7 +573,6 @@ class colorcount{
 
             } // end parallel
 
-            // _mm_free(update_count_array);
 
             set_count = set_count_loop;
             total_count = total_count_loop;
