@@ -271,8 +271,23 @@ int factorial(int x)
 	return (x == 1 ? x : x * factorial(x - 1));
 }
 
-
 int choose(int n, int k)
+{
+    if (k > n) return 0;
+    if (k * 2 > n) k = n-k;
+    if (k == 0) return 1;
+
+    int result = n;
+    for( int i = 2; i <= k; ++i  ) {
+        result *= (n-i+1);
+        result /= i;
+
+    }
+
+    return result;
+}
+
+int choose_old(int n, int k)
 {
 	int num_c;
 
@@ -284,6 +299,7 @@ int choose(int n, int k)
 	
 	return num_c;
 }
+
 /*
 template <typename int>
 void generate_all_permutations(vector<int> mapping, vector<int> rest, int** all_perms, int* counter)

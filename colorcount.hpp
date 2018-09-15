@@ -196,6 +196,7 @@ class colorcount{
                         elt = timer();
                     }      
                     init_table_node(s);
+                    printf("Finish initing table at bottom\n");
                     if (verbose && rank == 0) {  
                         elt = timer() - elt;
                         fprintf(stderr, "s %d, it node %9.6lf s.\n", s, elt);
@@ -217,8 +218,8 @@ class colorcount{
 
                     }
 
-                    // colorful_count(s);
-                    colorful_count_innerU(s);
+                    colorful_count(s);
+                    // colorful_count_innerU(s);
                     if (verbose && rank == 0) {  
                         elt = timer() - elt;
                         fprintf(stderr, "s %d, array time %9.6lf s.\n", s, elt);
@@ -261,8 +262,8 @@ class colorcount{
             if (verbose) {  
                 elt = timer();
             }
-            // full_count = colorful_count(0);
-            full_count = colorful_count_innerU(0);
+            full_count = colorful_count(0);
+            // full_count = colorful_count_innerU(0);
             if (verbose && rank == 0) {  
                 elt = timer() - elt;
                 fprintf(stderr, "s %d, array time %9.6lf s.\n", 0, elt);
@@ -329,16 +330,20 @@ class colorcount{
 
         double colorful_count(int s)
         {/*{{{*/
+
             double cc = 0.0;
             int num_verts_sub = subtemplates[s].num_vertices();
 
             int active_index = part.get_active_index(s);
-            // int passive_index = part.get_passive_index(s);
             int num_verts_a = num_verts_table[active_index];  
             int num_combinations = choose_table[num_verts_sub][num_verts_a];;  
             int set_count_loop = 0;
             int total_count_loop = 0;
             int read_count_loop = 0;    
+
+            int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
+            printf("count sub %d, lenComb: %d, lenAComb: %d, lenVec: %d\n", s, num_combinations_verts_sub, 
+                    num_combinations, (num_combinations_verts_sub*num_combinations));
 
 #pragma omp parallel num_threads(omp_nums)
             {    
@@ -377,7 +382,6 @@ class colorcount{
 
                         if (valid_nbrs_count)
                         {
-                            int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
 
                             // vectorize this loop
                             // replace this by using new index data structure
@@ -456,6 +460,13 @@ class colorcount{
             int total_count_loop = 0;
             int read_count_loop = 0;    
 
+            int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
+            int vec_loop_len = num_combinations_verts_sub*num_combinations;
+            // double* update_count_array = (double*)_mm_malloc(vec_loop_len*omp_nums*sizeof(double), 64);
+
+            printf("count sub %d, lenComb: %d, lenAComb: %d, lenVec: %d\n", s, num_combinations_verts_sub, 
+                    num_combinations, vec_loop_len);
+
 #pragma omp parallel num_threads(omp_nums)
             {    
 #if TIME_INNERLOOP 
@@ -477,7 +488,7 @@ class colorcount{
                         int* adjs = g->adjacent_vertices(v);
                         int end = g->out_degree(v);
 
-                        int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
+                        // int num_combinations_verts_sub = choose_table[num_colors][num_verts_sub];
 
                         //TODO: get the active s value and passive s value
                         // fetch the new index data array for active  
@@ -501,7 +512,6 @@ class colorcount{
                         if (valid_nbrs_count)
                         {
                             // allocate a temp array to hold all of the counting value
-                            int vec_loop_len = num_combinations_verts_sub*num_combinations;
                             double* update_count_array = (double*)_mm_malloc(vec_loop_len*sizeof(double), 64);
 
                             std::memset(update_count_array, 0, vec_loop_len*sizeof(double));
@@ -509,17 +519,18 @@ class colorcount{
                             int* comb_indexes_a_vec = comb_num_indexes_vec[0][s];
                             int* comb_indexes_p_vec = comb_num_indexes_vec[1][s];
 
+                            // make sure the data is aligned by 64 bytes
+                            __assume_aligned(update_count_array, 64);
+                            __assume_aligned(comb_indexes_a_vec, 64);
+                            __assume_aligned(comb_indexes_p_vec, 64);
+                            __assume_aligned(counts_a, 64);
+
                             // outmost loop over valid nbrs
                             for (int i = 0; i < valid_nbrs_count; ++i) 
                             {
                                 // get counts_a and counts_p
                                 float* counts_p = dt.get_passive(valid_nbrs[i]);
-
                                 // make sure the data is aligned by 64 bytes
-                                __assume_aligned(update_count_array, 64);
-                                __assume_aligned(comb_indexes_a_vec, 64);
-                                __assume_aligned(comb_indexes_p_vec, 64);
-                                __assume_aligned(counts_a, 64);
                                 __assume_aligned(counts_p, 64);
 
                                 #pragma vector always
@@ -536,34 +547,22 @@ class colorcount{
                             {
                                 for (int j=1;j<num_combinations;j++)
                                     update_count_array[n] += update_count_array[n+j];
+                                    // update_count_array_tls[n] += update_count_array[n+j];
                             }
 
                             // update the counts
                             for (int n = 0; n < num_combinations_verts_sub; ++n)
                             {
-
                                 double res = update_count_array[n*num_combinations];
-                                if ( res > 0.0)
+                                // double res = update_count_array_tls[n*num_combinations];
+                                if (res > 0)
                                 {
-#if COLLECT_DATA
-                                    ++set_count_loop;
-#endif              
-
-                                    if (s != 0)
-                                        dt.set(v, comb_num_indexes_set[s][n], (double)res);
-                                    else if (do_graphlet_freq || do_vert_output)
-                                        final_vert_counts[v] += res;
-
+                                    dt.set(v, comb_num_indexes_set[s][n], (double)res);
                                     cc += res;
-
                                 }
-#if COLLECT_DATA            
-                                ++total_count_loop;
-#endif
                             }
 
                             // free mem space
-                            // delete[] update_count_array;
                             _mm_free(update_count_array);
 
                         } // end of counting
@@ -584,6 +583,8 @@ class colorcount{
                 free(valid_nbrs);    
 
             } // end parallel
+
+            // _mm_free(update_count_array);
 
             set_count = set_count_loop;
             total_count = total_count_loop;
@@ -788,9 +789,6 @@ class colorcount{
                     num_verts_a = part.get_num_verts_active(s);
                     num_verts_p = part.get_num_verts_passive(s);          
 
-                    // comb_num_indexes_vec[0][s] = new int[choose(num_verts_sub, num_verts_a)*num_combinations_s];
-                    // comb_num_indexes_vec[1][s] = new int[choose(num_verts_sub, num_verts_a)*num_combinations_s];
-
                     comb_num_indexes_vec[0][s] = (int*)_mm_malloc(choose(num_verts_sub, num_verts_a)*num_combinations_s*sizeof(int), 64);
                     comb_num_indexes_vec[1][s] = (int*)_mm_malloc(choose(num_verts_sub, num_verts_a)*num_combinations_s*sizeof(int), 64);
 
@@ -875,8 +873,6 @@ class colorcount{
                     delete [] comb_num_indexes[1][s];
 
                     // delete vec data structure
-                    // delete [] comb_num_indexes_vec[0][s];
-                    // delete [] comb_num_indexes_vec[1][s];
                     _mm_free(comb_num_indexes_vec[0][s]);
                     _mm_free(comb_num_indexes_vec[1][s]);
                 }
